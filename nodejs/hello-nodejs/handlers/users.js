@@ -20,8 +20,17 @@ router.get("/", async (req, res) => {
 // יירוט בקשה עם ניתוב /users/:userId
 // קבלת יוזר אחד לפי מזהה
 router.get("/:userId", async (req, res) => {
-    const data = await User.findById(req.params.userId);
-    res.send(data);
+    try {
+        const user = await User.findById(req.params.userId);
+
+        if (!user) {
+            return res.status(403).send({ message: "User not found" });
+        }
+
+        res.send(user);
+    } catch (err) {
+        return res.status(403).send({ message: "ID is not valid" });
+    }
 });
 
 // הוספת יוזר
@@ -33,6 +42,21 @@ router.post("/", async (req, res) => {
 
     const newUser = await user.save();
     res.send(newUser);
+});
+
+// עריכת יוזר
+router.put("/:userId", async (req, res) => {
+    const user = await User.findById(req.params.userId);
+
+    if (!user) {
+        return res.status(403).send({ message: "לא נמצא משתמש" });
+    }
+
+    user.firstName = req.body.firstName;
+    user.lastName = req.body.lastName;
+
+    await user.save();
+    res.send(user);
 });
 
 // מחיקת יוזר
