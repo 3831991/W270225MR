@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 export default function Users() {
     const [users, setUsers] = useState([]);
     const [isModal, setIsModal] = useState(false);
+    const [form, setForm] = useState();
 
     const getUsers = async () => {
         const res = await fetch("http://localhost:3000/users");
@@ -22,24 +23,34 @@ export default function Users() {
 
     const addUser = async ev => {
         ev.preventDefault();
-        const { firstName, lastName } = ev.target.elements;
 
         const res = await fetch(`http://localhost:3000/users`, {
             method: 'POST',
             headers: { 'Content-type': 'application/json' },
-            body: JSON.stringify({
-                firstName: firstName.value,
-                lastName: lastName.value,
-            }),
+            body: JSON.stringify(form),
         });
 
         if (res.ok) {
             const item = await res.json();
             setUsers([item, ...users]);
             setIsModal(false);
+        }
+    }
 
-            firstName.value = "";
-            lastName.value = "";
+    const saveUser = async ev => {
+        ev.preventDefault();
+
+        const res = await fetch(`http://localhost:3000/users/${form._id}`, {
+            method: 'PUT',
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify(form),
+        });
+
+        if (res.ok) {
+            const i = users.findIndex(x => x._id == form._id);
+            users.splice(i, 1, form);
+            setUsers([...users]);
+            setIsModal(false);
         }
     }
 
@@ -57,16 +68,32 @@ export default function Users() {
         }
     }
 
-    const edit = async id => {
-        const user = users.find(x => x._id == id);
+    const edit = async user => {
+        setForm(user);
+        setIsModal(true);
+    }
 
-        console.log(user);
+    const chnage = ev => {
+        const { id, value } = ev.target;
+
+        setForm({
+            ...form,
+            [id]: value,
+        });
+    }
+
+    const openModal = () => {
+        setForm({
+            firstName: '',
+            lastName: '',
+        });
+        setIsModal(true);
     }
 
     return (
         <div>
             <br />
-            {!isModal && <button className="add" onClick={() => setIsModal(true)}>משתמש חדש</button>}
+            {!isModal && <button className="add" onClick={openModal}>משתמש חדש</button>}
 
             <h1>משתמשים</h1>
             {
@@ -74,16 +101,16 @@ export default function Users() {
                 <div className="modal">
                     <button className="close" onClick={() => setIsModal(false)}>X</button>
 
-                    <form onSubmit={addUser}>
+                    <form onSubmit={ev => form._id ? saveUser(ev) : addUser(ev)}>
                         <label>
                             שם פרטי
-                            <input type="text" id="firstName" />
+                            <input type="text" id="firstName" value={form.firstName} onChange={chnage} />
                         </label>
                         <label>
                             שם משפחה
-                            <input type="text" id="lastName" />
+                            <input type="text" id="lastName" value={form.lastName} onChange={chnage} />
                         </label>
-                        <button>הוסף</button>
+                        <button>{form._id ? 'שמור' : 'הוסף'}</button>
                     </form>
                 </div>
             }
@@ -105,7 +132,7 @@ export default function Users() {
                                 <td>{u.firstName}</td>
                                 <td>{u.lastName}</td>
                                 <td>
-                                    <button onClick={() => edit(u._id)}>✏️</button>
+                                    <button onClick={() => edit(u)}>✏️</button>
                                     <button onClick={() => remove(u._id)}>❌</button>
                                 </td>
                             </tr>
