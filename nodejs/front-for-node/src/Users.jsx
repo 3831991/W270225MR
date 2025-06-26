@@ -21,9 +21,7 @@ export default function Users() {
         getUsers();
     }, []);
 
-    const addUser = async ev => {
-        ev.preventDefault();
-
+    const addUser = async () => {
         const res = await fetch(`http://localhost:3000/users`, {
             method: 'POST',
             headers: { 'Content-type': 'application/json' },
@@ -37,20 +35,28 @@ export default function Users() {
         }
     }
 
-    const saveUser = async ev => {
-        ev.preventDefault();
-
+    const saveUser = async () => {
         const res = await fetch(`http://localhost:3000/users/${form._id}`, {
             method: 'PUT',
             headers: { 'Content-type': 'application/json' },
             body: JSON.stringify(form),
         });
-
+        
         if (res.ok) {
             const i = users.findIndex(x => x._id == form._id);
             users.splice(i, 1, form);
             setUsers([...users]);
             setIsModal(false);
+        }
+    }
+    
+    const save = ev => {
+        ev.preventDefault();
+
+        if (form._id) {
+            saveUser();
+        } else {
+            addUser();
         }
     }
 
@@ -101,7 +107,7 @@ export default function Users() {
                 <div className="modal">
                     <button className="close" onClick={() => setIsModal(false)}>X</button>
 
-                    <form onSubmit={ev => form._id ? saveUser(ev) : addUser(ev)}>
+                    <form onSubmit={save}>
                         <label>
                             שם פרטי
                             <input type="text" id="firstName" value={form.firstName} onChange={chnage} />
