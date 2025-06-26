@@ -320,3 +320,40 @@ a {
     opacity: 1;
   }
 }
+
+.UsersCard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  padding: 8px;
+}
+
+.Card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.Card .actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.Card .actions button {
+  width: initial;
+}
+
+nav {
+  padding: 8px;
+}
+
+nav button {
+  width: initial;
+  display: inline-block;
+  margin: 0;
+}
+
+nav button.active {
+  background: #61d8f9;
+  color: black;
+}

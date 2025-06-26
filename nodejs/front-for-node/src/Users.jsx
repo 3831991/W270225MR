@@ -4,6 +4,7 @@ export default function Users() {
     const [users, setUsers] = useState([]);
     const [isModal, setIsModal] = useState(false);
     const [form, setForm] = useState();
+    const [display, setDisplay] = useState('table');
 
     const getUsers = async () => {
         const res = await fetch("http://localhost:3000/users");
@@ -19,6 +20,18 @@ export default function Users() {
 
     useEffect(() => {
         getUsers();
+
+        const escape = ev => {
+            if (ev.key == 'Escape') {
+                setIsModal(false);
+            }
+        }
+
+        window.addEventListener("keyup", escape);
+
+        return () => {
+            window.removeEventListener("keyup", escape);
+        }
     }, []);
 
     const addUser = async () => {
@@ -120,32 +133,62 @@ export default function Users() {
                     </form>
                 </div>
             }
+            
+            <nav>
+                <button className={display == 'table' ? 'active' : ''} onClick={() => setDisplay('table')}>טבלה</button>
+                <button className={display == 'cards' ? 'active' : ''} onClick={() => setDisplay('cards')}>כרטיסים</button>
+            </nav>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>שם פרטי</th>
-                        <th>שם משפחה</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        users.map((u, i) =>
-                            <tr key={u._id}>
-                                <td>{i + 1}</td>
-                                <td>{u.firstName}</td>
-                                <td>{u.lastName}</td>
-                                <td>
-                                    <button onClick={() => edit(u)}>✏️</button>
-                                    <button onClick={() => remove(u._id)}>❌</button>
-                                </td>
-                            </tr>
-                        )
-                    }
-                </tbody>
-            </table>
+            {display == 'table' && <UsersTable users={users} edit={edit} remove={remove} />}
+            {display == 'cards' && <UsersCard users={users} edit={edit} remove={remove} />}
+        </div>
+    )
+}
+
+function UsersTable({ users, edit, remove }) {
+    return (
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>שם פרטי</th>
+                    <th>שם משפחה</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {
+                    users.map((u, i) =>
+                        <tr key={u._id}>
+                            <td>{i + 1}</td>
+                            <td>{u.firstName}</td>
+                            <td>{u.lastName}</td>
+                            <td>
+                                <button onClick={() => edit(u)}>✏️</button>
+                                <button onClick={() => remove(u._id)}>❌</button>
+                            </td>
+                        </tr>
+                    )
+                }
+            </tbody>
+        </table>
+    )
+}
+
+function UsersCard({ users, edit, remove }) {
+    return (
+        <div className="UsersCard">
+            {
+                users.map((u, i) =>
+                    <div className="Card" key={u._id}>
+                        <h2>{u.firstName} {u.lastName}</h2>
+                        <div className="actions">
+                            <button onClick={() => edit(u)}>✏️</button>
+                            <button onClick={() => remove(u._id)}>❌</button>
+                        </div>
+                    </div>
+                )
+            }
         </div>
     )
 }
