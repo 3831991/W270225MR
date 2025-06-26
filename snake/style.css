@@ -46,3 +46,28 @@ body {
 .board>div.head.left {
     border-radius: 12px 0 0 12px;
 }
+
+.topLeftRadius {
+    border-radius: 12px 0 0 0;
+}
+
+.topRightRadius {
+    border-radius: 0 12px 0 0;
+}
+
+.bottomRightRadius {
+    border-radius: 0 0 12px 0;
+}
+
+.bottomLeftRadius {
+    border-radius: 0 0 0 12px;
+}
+
+#score {
+    margin-top: 16px;
+    font-size: 2em;
+    color: white;
+    font-weight: bold;
+    font-family: cursive;
+    text-shadow: 0 0 black;
+}
