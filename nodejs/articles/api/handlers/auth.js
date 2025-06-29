@@ -14,8 +14,22 @@ const User = mongoose.model("users", schema);
 
 const router = Router();
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
 
+    const userFind = await User.findOne({ email });
+
+    if (!userFind) {
+        return res.status(403).send({ message: "email or password incorrect" });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, userFind.password);
+
+    if (!passwordMatch) {
+        return res.status(403).send({ message: "email or password incorrect" });
+    }
+
+    res.send(userFind);
 });
 
 router.post('/signup', async (req, res) => {
@@ -24,7 +38,7 @@ router.post('/signup', async (req, res) => {
     const userFind = await User.findOne({ email });
 
     if (userFind) {
-        return res.status(403).send({ message: "Email is used" })
+        return res.status(403).send({ message: "email is used" });
     }
 
     const user = new User({
