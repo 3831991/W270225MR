@@ -1,10 +1,18 @@
 npm init -y
 
+// ליצור קובץ ראשי
+index.js
+
 // כל ההתקנות ביחד
 npm install express cors mongoose moment morgan chalk joi jsonwebtoken fs --save
 
+// הוספה לקובץ package.json (מתחת main)
+"type": "module",
+
+// ליצור קובץ .gitignore
+// להוסיף את השורות הבאות:
+/node_modules
+/package-lock.json
+
 // התקנה חד"פ גלובלית
 npm i -g nodemon -D
-
-\\ הוספה לקובץ package.json
-"type": "module",
