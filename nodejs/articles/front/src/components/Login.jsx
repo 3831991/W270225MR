@@ -3,17 +3,18 @@ import { MyContext } from "../App";
 import Joi from 'joi';
 import { JOI_HEBREW } from "../joi-hebrew";
 import { Link } from "react-router";
+import { jwtDecode } from "jwt-decode";
 
 export default function Login() {
     const [form, setForm] = useState({
-        userName: '',
+        email: '',
         password: '',
     });
     const isFirstRender = useRef(true);
     const [errors, setErrors] = useState({});
     const [isError, setIsError] = useState(true);
     const schema = Joi.object({
-        userName: Joi.string().min(5).max(15).required(),
+        email: Joi.string().min(5).max(15).required(),
         password: Joi.string().required(),
     });
 
@@ -41,7 +42,7 @@ export default function Login() {
         ev.preventDefault();
         setIsLoader(true);
 
-        const res = await fetch(`https://api.shipap.co.il/login`, {
+        const res = await fetch(`http://localhost:3500/login`, {
             credentials: 'include',
             method: 'POST',
             headers: {'Content-type': 'application/json'},
@@ -49,11 +50,15 @@ export default function Login() {
         });
 
         if (res.ok) {
-            const user = await res.json();
+            const token = await res.text();
+            // פענוח ה-Token
+            const user = jwtDecode(token);
+            // שמירה מקומית
+            localStorage.setItem("token", token);
             snackbar(`${user.fullName} התחבר בהצלחה`);
             setUser(user);
         } else {
-            const err = await res.text();
+            const err = await res.json();
             snackbar(err);
         }
 
@@ -65,10 +70,10 @@ export default function Login() {
             <h1>התחברות</h1>
 
             <form>
-                <label className={errors.userName ? 'errorField' : ''}>
-                    שם משתמש:
-                    <input type="text" value={form.userName} onChange={ev => setForm({ ...form, userName: ev.target.value })} />
-                    {errors.userName && <div className="error">{errors.userName}</div>}
+                <label className={errors.email ? 'errorField' : ''}>
+                    אימייל:
+                    <input type="email" value={form.email} onChange={ev => setForm({ ...form, email: ev.target.value })} />
+                    {errors.email && <div className="error">{errors.email}</div>}
                 </label>
 
                 <label className={errors.password ? 'errorField' : ''}>

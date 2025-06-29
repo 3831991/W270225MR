@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "joi": "^17.13.3",
+    "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

@@ -7,6 +7,7 @@ import Articles from './components/Articles';
 import ArticleAdd from './components/ArticleAdd';
 import RecycleBin from './components/RecycleBin';
 import Signup from './components/Signup';
+import { jwtDecode } from 'jwt-decode';
 
 export const MyContext = createContext();
 
@@ -28,35 +29,28 @@ function App() {
   }, []);
 
   // בדיקה בטעינה הראשונית, האם היוזר מחובר
-  const getLoginStatus = async () => {
-    setIsLoader(true);
+  const getLoginStatus = () => {
+    const token = localStorage.getItem("token");
 
-    const res = await fetch(`https://api.shipap.co.il/login`, {
-      credentials: 'include',
-    });
+    if (token) {
+      const user = jwtDecode(token);
 
-    if (res.ok) {
-      const user = await res.json();
-      setUser(user);
+      const exp = user.exp * 1000;
+      const current = Date.now();
+
+      if (current > exp) {
+        setUser(null);
+      } else {
+        setUser(user);
+      }
     } else {
       setUser(null);
     }
-
-    setIsLoader(false);
   }
 
   const logout = async () => {
-    setIsLoader(true);
-
-    const res = await fetch(`https://api.shipap.co.il/logout`, {
-      credentials: 'include',
-    });
-
-    setIsLoader(false);
-
-    if (res.ok) {
-      setUser(null);
-    }
+    localStorage.removeItem("token");
+    setUser(null);
   }
 
   return (

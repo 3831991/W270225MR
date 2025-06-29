@@ -6,13 +6,16 @@ import { MyContext } from "../App";
 export default function Articles() {
     const [articles, setArticles] = useState([]);
     const navigate = useNavigate();
-    const { snackbar, setIsLoader, setUser } = useContext(MyContext);
+    const { snackbar, setIsLoader } = useContext(MyContext);
 
     const getData = async () => {
         setIsLoader(true);
 
-        const res = await fetch(`https://api.shipap.co.il/articles`, {
+        const res = await fetch(`http://localhost:3500/articles`, {
             credentials: 'include',
+            headers: {
+                Authorization: localStorage.getItem("token"),
+            },
         });
 
         if (res.ok) {
@@ -34,9 +37,12 @@ export default function Articles() {
 
         setIsLoader(true);
 
-        const res = await fetch(`https://api.shipap.co.il/articles/${id}`, {
+        const res = await fetch(`http://localhost:3500/articles/${id}`, {
             credentials: 'include',
             method: 'DELETE',
+            headers: {
+                Authorization: localStorage.getItem("token"),
+            },
         });
 
         if (res.ok) {
@@ -81,7 +87,7 @@ export default function Articles() {
                     <tbody>
                         {
                             articles.map((art, i) =>
-                                <tr key={art.id} onDoubleClick={() => goToEdit(art.id)}>
+                                <tr key={art._id} onDoubleClick={() => goToEdit(art.id)}>
                                     <td>{i + 1}</td>
                                     <td>{art.headline}</td>
                                     <td>{moment(art.addedTime).format("DD/MM/YY")}</td>
