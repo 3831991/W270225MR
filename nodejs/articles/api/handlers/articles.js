@@ -21,8 +21,9 @@ router.get('/', async (req, res) => {
 });
 
 // Get one article
-router.get('/:id', (req, res) => {
-
+router.get('/:id', async (req, res) => {
+    const item = await Article.findById(req.params.id);
+    res.send(item);
 });
 
 // Get the articles from the recycling basket
