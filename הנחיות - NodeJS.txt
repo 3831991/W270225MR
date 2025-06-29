@@ -4,7 +4,7 @@ npm init -y
 index.js
 
 // כל ההתקנות ביחד
-npm install express cors mongoose moment morgan chalk joi jsonwebtoken fs --save
+npm install express cors mongoose moment morgan chalk joi jsonwebtoken bcrypt fs --save
 
 // הוספה לקובץ package.json (מתחת main)
 "type": "module",
