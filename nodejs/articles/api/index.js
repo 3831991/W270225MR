@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import AuthRouter from './handlers/auth.js';
+import ArticlesRouter from './handlers/articles.js';
 
 // חיבור למסד הנתונים
 await mongoose.connect('mongodb://127.0.0.1:27017/full-stack-W270225MR');
@@ -32,3 +34,6 @@ app.get('/', (req, res) => {
         message: "Hello world!",
     });
 });
+
+app.use("/", AuthRouter);
+app.use("/articles", ArticlesRouter);
