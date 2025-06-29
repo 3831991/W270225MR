@@ -1,11 +1,23 @@
 import mongoose from "mongoose";
 import { Router } from 'express';
 
+const schema = new mongoose.Schema({
+    addedTime: { type: Date, default: Date.now },
+    publishDate: Date,
+    headline: String,
+    description: String,
+    content: String,
+    imgUrl: String,
+});
+
+const Article = mongoose.model("articles", schema);
+
 export const router = Router();
 
 // Get all articles
-router.get('/', (req, res) => {
-
+router.get('/', async (req, res) => {
+    const data = await Article.find();
+    res.send(data);
 });
 
 // Get one article
@@ -19,8 +31,20 @@ router.get('/recycle-bin', (req, res) => {
 });
 
 // Add article
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
+    const { publishDate, headline, description, content, imgUrl } = req.body;
 
+    const article = new Article({
+        publishDate,
+        headline,
+        description,
+        content,
+        imgUrl,
+    });
+
+    const newArticle = await article.save();
+
+    res.send(newArticle);
 });
 
 // Edit article
