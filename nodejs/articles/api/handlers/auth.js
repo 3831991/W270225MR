@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import { Router } from 'express';
+import jwt from 'jsonwebtoken';
+export const JWT_SECRET = "W270225MR_THIS_IS_MY_SECRET_5456f4s56d4f56ds4f56ds";
 
 const schema = new mongoose.Schema({
     firstName: String,
@@ -29,7 +31,14 @@ router.post('/login', async (req, res) => {
         return res.status(403).send({ message: "email or password incorrect" });
     }
 
-    res.send(userFind);
+    const obj = {
+        userId: userFind._id,
+        fullName: `${userFind.firstName} ${userFind.lastName}`,
+    };
+
+    const token = jwt.sign(obj, JWT_SECRET, { expiresIn: '1h' });
+
+    res.send(token);
 });
 
 router.post('/signup', async (req, res) => {

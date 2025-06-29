@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Router } from 'express';
+import guard from '../guard.js';
 
 const schema = new mongoose.Schema({
     addedTime: { type: Date, default: Date.now },
@@ -15,24 +16,24 @@ const Article = mongoose.model("articles", schema);
 export const router = Router();
 
 // Get all articles
-router.get('/', async (req, res) => {
+router.get('/', guard, async (req, res) => {
     const data = await Article.find();
     res.send(data);
 });
 
 // Get one article
-router.get('/:id', async (req, res) => {
+router.get('/:id', guard, async (req, res) => {
     const item = await Article.findById(req.params.id);
     res.send(item);
 });
 
 // Get the articles from the recycling basket
-router.get('/recycle-bin', (req, res) => {
+router.get('/recycle-bin', guard, async (req, res) => {
 
 });
 
 // Add article
-router.post('/', async (req, res) => {
+router.post('/', guard, async (req, res) => {
     const { publishDate, headline, description, content, imgUrl } = req.body;
 
     const article = new Article({
@@ -49,17 +50,17 @@ router.post('/', async (req, res) => {
 });
 
 // Edit article
-router.put('/:id', (req, res) => {
+router.put('/:id', guard, async (req, res) => {
 
 });
 
 // Remove article
-router.delete('/:id', (req, res) => {
+router.delete('/:id', guard, async (req, res) => {
 
 });
 
 // Restore article
-router.patch('/restore/:id', (req, res) => {
+router.patch('/restore/:id', guard, async (req, res) => {
 
 });
 
