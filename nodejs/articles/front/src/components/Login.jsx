@@ -59,7 +59,7 @@ export default function Login() {
             setUser(user);
         } else {
             const err = await res.json();
-            snackbar(err);
+            snackbar(err.message);
         }
 
         setIsLoader(false);

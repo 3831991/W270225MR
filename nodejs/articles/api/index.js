@@ -25,7 +25,7 @@ app.use(cors({
 
 // הפעלת השרת ושימוש בפורט
 app.listen(3500, () => {
-    console.log("listening on port 3000");
+    console.log("listening on port 3500");
 });
 
 // יירוט בקשה ללא ניתוב (דף הבית)

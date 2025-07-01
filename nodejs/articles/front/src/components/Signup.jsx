@@ -11,15 +11,17 @@ export default function Signup() {
     const [errors, setErrors] = useState({});
     const [isError, setIsError] = useState(true);
     const [form, setForm] = useState({
-        fullName: '',
+        firstName: '',
+        lastName: '',
         email: '',
-        userName: '',
+        phone: '',
         password: '',
     });
     const schema = Joi.object({
-        fullName: Joi.string().min(4).max(20).required(),
+        firstName: Joi.string().min(4).max(20).required(),
+        lastName: Joi.string().min(4).max(20).required(),
         email: Joi.string().email({ tlds: false }),
-        userName: Joi.string().max(10).required(),
+        phone: Joi.string().min(10).max(12).required(),
         password: Joi.string().pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/).required(),
     });
 
@@ -43,7 +45,7 @@ export default function Signup() {
 
         setIsLoader(true);
 
-        const res = await fetch(`https://api.shipap.co.il/signup`, {
+        const res = await fetch(`http://localhost:3500/signup`, {
             credentials: 'include',
             method: 'POST',
             headers: { 'Content-type': 'application/json' },
@@ -54,8 +56,8 @@ export default function Signup() {
             snackbar("המשתמש נוצר בהצלחה");
             navigate('/');
         } else {
-            const err = await res.text();
-            snackbar(err);
+            const err = await res.json();
+            snackbar(err.message);
         }
 
         setIsLoader(false);
@@ -94,10 +96,16 @@ export default function Signup() {
             <h1>יצירת משתמש</h1>
 
             <form onSubmit={send}>
-                <label className={errors.fullName ? 'errorField' : ''}>
-                    <i className="fa fa-user"></i> שם מלא:
-                    <input type="text" id="fullName" value={form.fullName} onChange={change} />
-                    {errors.fullName && <div className="error">{errors.fullName}</div>}
+                <label className={errors.firstName ? 'errorField' : ''}>
+                    <i className="fa fa-user"></i> שם פרטי:
+                    <input type="text" id="firstName" value={form.firstName} onChange={change} />
+                    {errors.firstName && <div className="error">{errors.firstName}</div>}
+                </label>
+
+                <label className={errors.lastName ? 'errorField' : ''}>
+                    <i className="fa fa-users"></i> שם משפחה:
+                    <input type="text" id="lastName" value={form.lastName} onChange={change} />
+                    {errors.lastName && <div className="error">{errors.lastName}</div>}
                 </label>
 
                 <label className={errors.email ? 'errorField' : ''}>
@@ -106,10 +114,10 @@ export default function Signup() {
                     {errors.email && <div className="error">{errors.email}</div>}
                 </label>
 
-                <label className={errors.userName ? 'errorField' : ''}>
-                    <i className="fa fa-address-card"></i> שם משתמש:
-                    <input type="text" id="userName" value={form.userName} onChange={change} />
-                    {errors.userName && <div className="error">{errors.userName}</div>}
+                <label className={errors.phone ? 'errorField' : ''}>
+                    <i className="fa fa-phone"></i> טלפון:
+                    <input type="text" id="phone" value={form.phone} onChange={change} />
+                    {errors.phone && <div className="error">{errors.phone}</div>}
                 </label>
 
                 <label className={errors.password ? 'errorField' : ''}>
