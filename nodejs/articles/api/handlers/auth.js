@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
         fullName: `${userFind.firstName} ${userFind.lastName}`,
     };
 
-    const token = jwt.sign(obj, JWT_SECRET, { expiresIn: '20s' });
+    const token = jwt.sign(obj, JWT_SECRET, { expiresIn: '15m' });
 
     res.send(token);
 });
@@ -70,7 +70,7 @@ router.get('/token', guard, async (req, res) => {
         userId: data.userId,
         fullName: data.fullName,
     };
-    const token = jwt.sign(obj, JWT_SECRET, { expiresIn: '20s' });
+    const token = jwt.sign(obj, JWT_SECRET, { expiresIn: '15m' });
 
     res.send(token);
 });

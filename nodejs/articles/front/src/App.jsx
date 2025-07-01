@@ -25,8 +25,14 @@ function App() {
   }
 
   useEffect(() => {
+    // בדיקת מצב החיבור
     getLoginStatus();
-    setInterval(refreshToken, 15 * 1000);
+    // רענון לטוקן כל עשר דקות
+    // (היות והטוקן תקף ל-15 דקות)
+    const tenMinutes = 10 * 60 * 1000;
+    setInterval(refreshToken, tenMinutes);
+    // כשחוזרים לדף בוא בודק שוב
+    addEventListener('focus', getLoginStatus);
   }, []);
 
   // בדיקה בטעינה הראשונית, האם היוזר מחובר
@@ -42,6 +48,7 @@ function App() {
       if (current > exp) {
         setUser(null);
       } else {
+        // בהפעלה ראשונית, אם הטוקן תקין - אנחנו מבצעים לו הארכה
         refreshToken();
         setUser(user);
       }
@@ -55,6 +62,7 @@ function App() {
     setUser(null);
   }
 
+  // הארכת תוקף לטוקן פעיל
   const refreshToken = async () => {
     const token = localStorage.getItem("token");
 
@@ -62,7 +70,7 @@ function App() {
     if (token) {
       // הנתונים מהטוקן
       const user = jwtDecode(token);
-console.log(user);
+
       // זמן התפוגה של הטוקן (milliseconds)
       const exp = user.exp * 1000;
       // הזמן הנוכחי (milliseconds)
@@ -84,6 +92,8 @@ console.log(user);
           localStorage.setItem('token', token);
         }
       }
+    } else {
+      setUser(null);
     }
   }
 
