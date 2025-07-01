@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 export const JWT_SECRET = "W270225MR_THIS_IS_MY_SECRET_5456f4s56d4f56ds4f56ds";
+import guard from '../guard.js';
 
 const schema = new mongoose.Schema({
     firstName: String,
@@ -36,7 +37,7 @@ router.post('/login', async (req, res) => {
         fullName: `${userFind.firstName} ${userFind.lastName}`,
     };
 
-    const token = jwt.sign(obj, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(obj, JWT_SECRET, { expiresIn: '20s' });
 
     res.send(token);
 });
@@ -61,6 +62,17 @@ router.post('/signup', async (req, res) => {
     const newUser = await user.save();
 
     res.send(newUser);
+});
+
+router.get('/token', guard, async (req, res) => {
+    const data = jwt.decode(req.headers.authorization);
+    const obj = {
+        userId: data.userId,
+        fullName: data.fullName,
+    };
+    const token = jwt.sign(obj, JWT_SECRET, { expiresIn: '20s' });
+
+    res.send(token);
 });
 
 export default router;
