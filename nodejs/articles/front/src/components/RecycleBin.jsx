@@ -10,8 +10,11 @@ export default function RecycleBin() {
     const getData = async () => {
         setIsLoader(true);
 
-        const res = await fetch(`https://api.shipap.co.il/articles/recycle-bin`, {
+        const res = await fetch(`http://localhost:3500/articles/recycle-bin`, {
             credentials: 'include',
+            headers: {
+                Authorization: localStorage.getItem("token"),
+            },
         });
 
         if (res.ok) {
@@ -33,9 +36,12 @@ export default function RecycleBin() {
 
         setIsLoader(true);
 
-        const res = await fetch(`https://api.shipap.co.il/articles/restore/${id}`, {
+        const res = await fetch(`http://localhost:3500/articles/restore/${id}`, {
             credentials: 'include',
-            method: 'PUT',
+            method: 'PATCH',
+            headers: {
+                Authorization: localStorage.getItem("token"),
+            },
         });
 
         if (res.ok) {
@@ -68,14 +74,14 @@ export default function RecycleBin() {
                 <tbody>
                     {
                         articles.map((art, i) =>
-                            <tr key={art.id}>
+                            <tr key={art._id}>
                                 <td>{i + 1}</td>
                                 <td>{art.headline}</td>
                                 <td>{moment(art.addedTime).format("DD/MM/YY")}</td>
                                 <td>{moment(art.publishDate).format("DD/MM/YY")}</td>
                                 <td>{art.views}</td>
                                 <td>
-                                    <button className="green" onClick={() => restore(art.id)}><i className="fa fa-recycle"></i></button>
+                                    <button className="green" onClick={() => restore(art._id)}><i className="fa fa-recycle"></i></button>
                                 </td>
                             </tr>
                         )
