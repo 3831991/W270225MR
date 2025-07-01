@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { MyContext } from "../App";
 import { useEffect } from "react";
+import moment from "moment";
 
 export default function ArticleAdd() {
     const [form, setForm] = useState({
@@ -9,7 +10,7 @@ export default function ArticleAdd() {
         description: '',
         content: '',
         imgUrl: '',
-        publishDate: '',
+        publishDate: moment().format("YYYY-MM-DD"),
     });
 
     const { snackbar, setIsLoader } = useContext(MyContext);
@@ -19,10 +20,13 @@ export default function ArticleAdd() {
     const add = async () => {
         setIsLoader(true);
 
-        const res = await fetch(`https://api.shipap.co.il/articles`, {
+        const res = await fetch(`http://localhost:3500/articles`, {
             credentials: 'include',
             method: 'POST',
-            headers: { 'Content-type': 'application/json' },
+            headers: {
+                Authorization: localStorage.getItem("token"),
+                'Content-type': 'application/json',
+            },
             body: JSON.stringify(form),
         });
 
@@ -35,10 +39,13 @@ export default function ArticleAdd() {
     const update = async () => {
         setIsLoader(true);
 
-        const res = await fetch(`https://api.shipap.co.il/articles/${articleId}`, {
+        const res = await fetch(`http://localhost:3500/articles/${articleId}`, {
             credentials: 'include',
             method: 'PUT',
-            headers: { 'Content-type': 'application/json' },
+            headers: {
+                Authorization: localStorage.getItem("token"),
+                'Content-type': 'application/json',
+            },
             body: JSON.stringify(form),
         });
 
@@ -70,12 +77,16 @@ export default function ArticleAdd() {
     const getArticle = async id => {
         setIsLoader(true);
 
-        const res = await fetch(`https://api.shipap.co.il/articles/${id}`, {
+        const res = await fetch(`http://localhost:3500/articles/${id}`, {
             credentials: 'include',
+            headers: {
+                Authorization: localStorage.getItem("token"),
+            },
         });
 
         if (res.ok) {
             const data = await res.json();
+            data.publishDate = moment(data.publishDate).format("YYYY-MM-DD");
             setForm(data);
         }
 

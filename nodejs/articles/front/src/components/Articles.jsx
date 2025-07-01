@@ -87,15 +87,15 @@ export default function Articles() {
                     <tbody>
                         {
                             articles.map((art, i) =>
-                                <tr key={art._id} onDoubleClick={() => goToEdit(art.id)}>
+                                <tr key={art._id} onDoubleClick={() => goToEdit(art._id)}>
                                     <td>{i + 1}</td>
                                     <td>{art.headline}</td>
                                     <td>{moment(art.addedTime).format("DD/MM/YY")}</td>
                                     <td>{moment(art.publishDate).format("DD/MM/YY")}</td>
                                     <td>{art.views}</td>
                                     <td>
-                                        <button className="green" onClick={() => goToEdit(art.id)}><i className="fa fa-edit"></i></button>
-                                        <button className="red" onClick={() => remove(art.id)}><i className="fa fa-trash"></i></button>
+                                        <button className="green" onClick={() => goToEdit(art._id)}><i className="fa fa-edit"></i></button>
+                                        <button className="red" onClick={() => remove(art._id)}><i className="fa fa-trash"></i></button>
                                     </td>
                                 </tr>
                             )
