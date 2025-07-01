@@ -22,7 +22,7 @@ function App() {
     <div className='cards'>
       {
         articles.map(a =>
-          <Card>
+          <Card key={a._id}>
             <CardImage>{a.imgUrl}</CardImage>
             <CardHeadline>{a.headline}</CardHeadline>
           </Card>
