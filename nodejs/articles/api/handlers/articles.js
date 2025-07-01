@@ -22,6 +22,12 @@ router.get('/', guard, async (req, res) => {
     res.send(data);
 });
 
+// Get all articles
+router.get('/website', async (req, res) => {
+    const data = await Article.find({ isDeleted: false });
+    res.send(data);
+});
+
 // Get the articles from the recycling basket
 router.get('/recycle-bin', guard, async (req, res) => {
     const data = await Article.find({ isDeleted: true });
