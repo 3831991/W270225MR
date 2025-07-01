@@ -47,7 +47,7 @@ export default function Articles() {
 
         if (res.ok) {
             snackbar("הכתבה נמחקה בהצלחה");
-            setArticles(articles.filter(x => x.id != id));
+            setArticles(articles.filter(x => x._id != id));
         }
 
         setIsLoader(false);

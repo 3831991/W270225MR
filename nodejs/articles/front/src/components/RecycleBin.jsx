@@ -46,7 +46,7 @@ export default function RecycleBin() {
 
         if (res.ok) {
             snackbar("הכתבה שוחזרה בהצלחה");
-            setArticles(articles.filter(x => x.id != id));
+            setArticles(articles.filter(x => x._id != id));
         }
 
         setIsLoader(false);
@@ -60,34 +60,39 @@ export default function RecycleBin() {
                 <button className="add"><i className="fa fa-angle-right"></i> לניהול כתבות</button>
             </Link>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>כותרת</th>
-                        <th>תאריך יצירה</th>
-                        <th>תאריך פרסום</th>
-                        <th>צפיות</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        articles.map((art, i) =>
-                            <tr key={art._id}>
-                                <td>{i + 1}</td>
-                                <td>{art.headline}</td>
-                                <td>{moment(art.addedTime).format("DD/MM/YY")}</td>
-                                <td>{moment(art.publishDate).format("DD/MM/YY")}</td>
-                                <td>{art.views}</td>
-                                <td>
-                                    <button className="green" onClick={() => restore(art._id)}><i className="fa fa-recycle"></i></button>
-                                </td>
-                            </tr>
-                        )
-                    }
-                </tbody>
-            </table>
+            {
+                articles.length ?
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>כותרת</th>
+                            <th>תאריך יצירה</th>
+                            <th>תאריך פרסום</th>
+                            <th>צפיות</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            articles.map((art, i) =>
+                                <tr key={art._id}>
+                                    <td>{i + 1}</td>
+                                    <td>{art.headline}</td>
+                                    <td>{moment(art.addedTime).format("DD/MM/YY")}</td>
+                                    <td>{moment(art.publishDate).format("DD/MM/YY")}</td>
+                                    <td>{art.views}</td>
+                                    <td>
+                                        <button className="green" onClick={() => restore(art._id)}><i className="fa fa-recycle"></i></button>
+                                    </td>
+                                </tr>
+                            )
+                        }
+                    </tbody>
+                </table> :
+                <p className="noData">סל המחזור ריק...</p>
+            }
+            
         </div>
     )
 }
