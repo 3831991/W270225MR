@@ -33,6 +33,21 @@ router.post("/upload", (req, res) => {
     form.parse(req, (err, fields, files) => {
         const file = files.file[0];
 
+        const allowTypes = [
+            'image/jpeg',
+            'image/jpg',
+            'image/png',
+            'image/gif',
+        ];
+
+        if (!allowTypes.includes(file.mimetype)) {
+            return res.status(403).send({ message: "מה לא ברור?" });
+        }
+
+        if (file.size > 1000000 * 2) { // 2MB
+            return res.status(403).send({ message: "הגזמת!!!!" });
+        }
+
         fs.copyFile(file.filepath, `./images/${file.originalFilename}`, err => {
             if (err) {
                 console.log(err);
