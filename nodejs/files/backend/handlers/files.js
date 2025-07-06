@@ -2,6 +2,7 @@ import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { formidable } from 'formidable';
 
 export const router = Router();
 
@@ -24,6 +25,22 @@ router.get('/:fileName', (req, res) => {
     url = path.resolve(url);
     // שליחת הקובץ ללקוח
     res.sendFile(url);
+});
+
+router.post("/upload", (req, res) => {
+    const form = formidable();
+
+    form.parse(req, (err, fields, files) => {
+        const file = files.file[0];
+
+        fs.copyFile(file.filepath, `./images/${file.originalFilename}`, err => {
+            if (err) {
+                console.log(err);
+            }
+
+            res.end();
+        });
+    });
 });
 
 export default router;
