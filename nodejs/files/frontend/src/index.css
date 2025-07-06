@@ -6,7 +6,8 @@ body {
 .Images {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 16px;
+  padding: 12px;
 }
 
 .imageFrame {
@@ -23,4 +24,10 @@ body {
 
 .image img {
   width: 100%;
+  filter: brightness(0.5);
+  transition: 0.3s;
+}
+
+.image img:hover {
+  filter: brightness(1);
 }
