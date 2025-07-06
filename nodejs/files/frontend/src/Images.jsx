@@ -16,6 +16,16 @@ export default function Images() {
     }
 
     return (
-        <div>Images</div>
+        <div className="Images">
+            {
+                images.map(imageName => 
+                    <div className="imageFrame">
+                        <div className="image">
+                            <img src={`http://localhost:3333/files/${imageName}`} />
+                        </div>
+                    </div>
+                )
+            }
+        </div>
     )
 }

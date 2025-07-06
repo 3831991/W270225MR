@@ -2,3 +2,25 @@ body {
   direction: rtl;
   background-color: darkslateblue;
 }
+
+.Images {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.imageFrame {
+  background-color: white;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 0 3px #0000008c;
+}
+
+.image {
+  height: 16vw;
+  overflow: hidden;
+}
+
+.image img {
+  width: 100%;
+}
