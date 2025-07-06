@@ -31,3 +31,30 @@ body {
 .image img:hover {
   filter: brightness(1);
 }
+
+.uploadFrame {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  border-radius: 4px;
+  /* border: 3px dashed #999999; */
+}
+
+.uploadFrame button {
+  background-color: darkslateblue;
+  color: white;
+  border: 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 1.1em;
+  cursor: pointer;
+}
+
+.uploadFrame button:hover {
+  filter: brightness(1.3);
+}
+
+input[type=file] {
+  display: none;
+}
