@@ -10,6 +10,7 @@ const divs = [];
 let direction = 'left';
 let interval;
 let baitIndex;
+let isGameOver = false;
 
 function createBoard() {
     for (let i = 0; i < width * height; i++) {
@@ -48,6 +49,12 @@ function color() {
 }
 
 function move(dir) {
+    if (isGameOver) {
+        return;
+    }
+
+    document.querySelector("input[type=color]").style.display = 'none';
+
     head = snake[0];
 
     if (dir === 'left') {
@@ -129,6 +136,7 @@ function autoMove() {
 }
 
 function gameOver() {
+    isGameOver = true;
     clearInterval(interval);
     sound("error.mp3");
     setTimeout(() => alert("איזה באסה..."), 50);
@@ -158,3 +166,13 @@ window.addEventListener('keydown', ev => {
         case 'Escape': clearInterval(interval); break;
     }
 });
+
+function changeColor(color) {
+    localStorage.snakeColor = color;
+    document.getElementById('snakeStyle').innerHTML = `.board>div.active { background-color: ${color}; }`;
+}
+
+if (localStorage.snakeColor) {
+    document.querySelector("input[type=color]").value = localStorage.snakeColor;
+    changeColor(localStorage.snakeColor);
+}
