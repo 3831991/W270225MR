@@ -1,11 +1,11 @@
 import './App.css'
-import Imgaes from './Imgaes'
+import Images from './Images'
 
 export default function App() {
 
   return (
     <>
-      <Imgaes />
+      <Images />
     </>
   )
 }
