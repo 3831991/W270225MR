@@ -43,4 +43,10 @@ router.post("/upload", (req, res) => {
     });
 });
 
+router.delete("/:fileName", (req, res) => {
+    fs.unlink(`./images/${req.params.fileName}`, err => {
+        res.end();
+    });
+});
+
 export default router;

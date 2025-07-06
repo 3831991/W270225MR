@@ -32,17 +32,38 @@ export default function Images() {
         }
     }
 
+    const remove = async imageName => {
+        if (!confirm("הא למחוק את התמונה?")) {
+            return;
+        }
+
+        const res = await fetch(`http://localhost:3333/files/${imageName}`, {
+            method: "DELETE",
+        });
+
+        if (res.ok) {
+            setImages(images.filter(img => img != imageName));
+        }
+    }
+
+    const show = imageName => {
+        window.open(`http://localhost:3333/files/${imageName}`, "_blank");
+    }
+
     return (
         <div className="Images">
             {
                 images.map(imageName => 
-                    <a key={imageName} href={`http://localhost:3333/files/${imageName}`} target="_blank">
-                        <div className="imageFrame">
-                            <div className="image">
-                                <img src={`http://localhost:3333/files/${imageName}`} />
-                            </div>
+                    <div className="imageFrame" key={imageName}>
+                        <div className="image">
+                            <img src={`http://localhost:3333/files/${imageName}`} />
                         </div>
-                    </a>
+
+                        <div className="actions">
+                            <button onClick={() => show(imageName)}>הצג</button>
+                            <button onClick={() => remove(imageName)}>מחק</button>
+                        </div>
+                    </div>
                 )
             }
             <div className="uploadFrame">
