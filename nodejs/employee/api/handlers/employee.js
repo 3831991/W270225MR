@@ -23,7 +23,7 @@ const EmployeeSchema = new Schema({
     address: Address,
     image: Image,
     gender: String,
-    userId: Schema.Types.ObjectId,
+    // userId: Schema.Types.ObjectId,
 });
 
 export const Employee = model("employees", EmployeeSchema);
@@ -38,7 +38,31 @@ router.get('/',  async (req, res) => {
 
 // Add employee
 router.post('/', async (req, res) => {
-    req.body
+    const item = req.body;
+
+    const employee = new Employee({
+        firstName: item.firstName,
+        lastName: item.lastName,
+        personalId: item.personalId,
+        phone: item.phone,
+        email: item.email,
+        birthDate: item.birthDate,
+        address: {
+            city: item.address.city,
+            street: item.address.street,
+            house: item.address.house,
+        },
+        image: {
+            name: item.image.name,
+            size: item.image.size,
+            type: item.image.type,
+        },
+        gender: item.gender,
+        // userId: item.userId,
+    });
+
+    const newEmployee = await employee.save();
+    res.send(newEmployee);
 });
 
 export default router;
