@@ -36,4 +36,9 @@ router.get('/',  async (req, res) => {
     res.send(data);
 });
 
+// Add employee
+router.post('/', async (req, res) => {
+    req.body
+});
+
 export default router;
