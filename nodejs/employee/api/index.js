@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import EmployeesRouter from './handlers/employee.js';
+import AuthRouter from './handlers/auth.js';
 
 // חיבור למסד הנתונים
 await mongoose.connect('mongodb://127.0.0.1:27017/full-stack-W270225MR');
@@ -34,4 +35,5 @@ app.get('/', (req, res) => {
     });
 });
 
+app.use("/", AuthRouter);
 app.use("/employees", EmployeesRouter);
