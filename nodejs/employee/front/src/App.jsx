@@ -6,8 +6,6 @@ import EmployeeCard from './EmployeeCard/EmployeeCard'
 function App() {
   return (
     <>
-      <h1>ניהול עובדים</h1>
-
       <Routes>
         <Route path="/" element={<Employee />} />
         <Route path="/employee/:id" element={<EmployeeCard />} />

@@ -36,6 +36,12 @@ router.get('/',  async (req, res) => {
     res.send(data);
 });
 
+// Get employee
+router.get('/:id',  async (req, res) => {
+    const data = await Employee.findById(req.params.id);
+    res.send(data);
+});
+
 // Add employee
 router.post('/', async (req, res) => {
     const item = req.body;

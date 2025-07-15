@@ -15,17 +15,20 @@ export default function Employee() {
     }
 
     return (
-        <div className='cards'>
-            {
-                employees.map((e, i) => 
-                    <Link key={e._id} to={`/employee/${e._id}`}>
-                        <div className='Card'>
-                            <div className='circle' style={{ backgroundColor: `hsl(${i * 40}deg 83% 47%)` }}>{e.firstName[0]}</div>
-                            <h3>{e.firstName} {e.lastName}</h3>
-                        </div>
-                    </Link>
-                )
-            }
-        </div>
+        <>
+            <h1>ניהול עובדים</h1>
+            <div className='cards'>
+                {
+                    employees.map((e, i) => 
+                        <Link key={e._id} to={`/employee/${e._id}`}>
+                            <div className='Card'>
+                                <div className='circle' style={{ backgroundColor: `hsl(${i * 40}deg 83% 47%)` }}>{e.firstName[0]}</div>
+                                <h3>{e.firstName} {e.lastName}</h3>
+                            </div>
+                        </Link>
+                    )
+                }
+            </div>
+        </>
     )
 }
