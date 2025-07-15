@@ -32,7 +32,8 @@ const router = Router();
 
 // Get all employees
 router.get('/',  async (req, res) => {
-    res.send({ banana: 'Yellow' });
+    const data = await Employee.find();
+    res.send(data);
 });
 
 export default router;
