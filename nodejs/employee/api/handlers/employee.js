@@ -58,9 +58,9 @@ router.post('/', async (req, res) => {
         email: item.email,
         birthDate: item.birthDate,
         address: {
-            city: item.address.city,
-            street: item.address.street,
-            house: item.address.house,
+            city: item.city,
+            street: item.street,
+            house: item.house,
         },
         image: {
             name: item.image.name,
