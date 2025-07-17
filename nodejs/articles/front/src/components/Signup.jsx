@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { MyContext } from "../App";
 import Joi from "joi";
 import { JOI_HEBREW } from "../joi-hebrew";
+import { signupSchema } from "../schemes";
 
 export default function Signup() {
     const navigate = useNavigate();
@@ -10,24 +11,10 @@ export default function Signup() {
     const isFirstRender = useRef(true);
     const [errors, setErrors] = useState({});
     const [isError, setIsError] = useState(true);
-    const [form, setForm] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        password: '',
-    });
-    const schema = Joi.object({
-        firstName: Joi.string().min(4).max(20).required(),
-        lastName: Joi.string().min(4).max(20).required(),
-        email: Joi.string().email({ tlds: false }),
-        phone: Joi.string().min(10).max(12).required(),
-        password: Joi.string().pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/).required(),
-    });
+    const [form, setForm] = useState();
+    const schema = useRef(Joi.object({}));
 
     const change = ev => {
-        // const id = ev.target.id;
-        // const value = ev.target.value;
         const { id, value } = ev.target;
 
         setForm({
@@ -66,6 +53,18 @@ export default function Signup() {
     useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
+
+            const obj = {};
+            const joiObj = {};
+
+            signupSchema.forEach(s => {
+                obj[s.field] = '';
+                joiObj[s.field] = s.joi;
+
+                setForm(obj);
+                schema.current = Joi.object(joiObj);
+            });
+
             return;
         }
 
@@ -80,7 +79,7 @@ export default function Signup() {
                 language: 'he'
             }
         };
-        const validation = schema.validate(form, options);
+        const validation = schema.current.validate(form, options);
         const err = {};
 
         validation.error?.details.forEach(x => {
@@ -95,38 +94,21 @@ export default function Signup() {
         <>
             <h1>יצירת משתמש</h1>
 
-            <form onSubmit={send}>
-                <label className={errors.firstName ? 'errorField' : ''}>
-                    <i className="fa fa-user"></i> שם פרטי:
-                    <input type="text" id="firstName" value={form.firstName} onChange={change} />
-                    {errors.firstName && <div className="error">{errors.firstName}</div>}
-                </label>
-
-                <label className={errors.lastName ? 'errorField' : ''}>
-                    <i className="fa fa-users"></i> שם משפחה:
-                    <input type="text" id="lastName" value={form.lastName} onChange={change} />
-                    {errors.lastName && <div className="error">{errors.lastName}</div>}
-                </label>
-
-                <label className={errors.email ? 'errorField' : ''}>
-                    <i className="fa fa-envelope"></i> אימייל:
-                    <input type="text" id="email" value={form.email} onChange={change} />
-                    {errors.email && <div className="error">{errors.email}</div>}
-                </label>
-
-                <label className={errors.phone ? 'errorField' : ''}>
-                    <i className="fa fa-phone"></i> טלפון:
-                    <input type="text" id="phone" value={form.phone} onChange={change} />
-                    {errors.phone && <div className="error">{errors.phone}</div>}
-                </label>
-
-                <label className={errors.password ? 'errorField' : ''}>
-                    <i className="fa fa-asterisk"></i> סיסמה:
-                    <input type="password" id="password" value={form.password} onChange={change} />
-                    {errors.password && <div className="error">{errors.password}</div>}
-                </label>
-                <button disabled={isError}>הרשם</button>
-            </form>
+            {
+                form &&
+                <form onSubmit={send}>
+                    {
+                        signupSchema.map(s =>
+                            <label key={s.field} className={errors[s.field] ? 'errorField' : ''}>
+                                <i className={'fa fa-' + s.icon}></i> {s.label}:
+                                <input type={s.type} id={s.field} value={form[s.field]} onChange={change} />
+                                {errors[s.field] && <div className="error">{errors[s.field]}</div>}
+                            </label>
+                        )
+                    }
+                    <button disabled={isError}>הרשם</button>
+                </form>
+            }
 
             <Link to="/">להתחברות לחץ כאן</Link>
         </>
