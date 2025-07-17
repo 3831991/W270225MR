@@ -3,7 +3,7 @@ import './EmployeeCard.css';
 import { useEffect, useState } from 'react';
 
 export default function EmployeeCard() {
-    const [employee, setEmployee] = useState(null);
+    const [employee, setEmployee] = useState();
     const { id } = useParams();
 
     useEffect(() => {
@@ -12,13 +12,18 @@ export default function EmployeeCard() {
 
     const getEmployee = async () => {
         const res = await fetch(`http://localhost:4000/employees/${id}`);
-        setEmployee(await res.json());
+
+        if (res.ok) {
+            setEmployee(await res.json());
+        } else {
+            setEmployee(null);
+        }
     }
 
     return (
         <>
             {
-                employee &&
+                employee ?
                 <div className="employee-card">
                     <div className="employee-card-header">
                         <img src={`http://localhost:4000/images/${employee.image.name}`} className="employee-image" />
@@ -40,7 +45,8 @@ export default function EmployeeCard() {
                     <div className="employee-gender">
                         <p><strong>מין:</strong> {employee.gender}</p>
                     </div>
-                </div>
+                </div> : 
+                (employee === null ? <div className='EmployeeEmpty'>לא נמצא עובד - {id}</div> : '')
             }
         </>
     )

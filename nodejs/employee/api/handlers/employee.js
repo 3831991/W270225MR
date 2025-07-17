@@ -38,8 +38,12 @@ router.get('/',  async (req, res) => {
 
 // Get employee
 router.get('/:id',  async (req, res) => {
-    const data = await Employee.findById(req.params.id);
-    res.send(data);
+    try {
+        const data = await Employee.findById(req.params.id);
+        res.send(data);
+    } catch (err) {
+        res.status(403).send({ message: '' });
+    }
 });
 
 // Add employee

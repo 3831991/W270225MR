@@ -55,3 +55,11 @@
 .employee-card p {
     color: #555;
 }
+
+.EmployeeEmpty {
+    color: white;
+    text-align: center;
+    font-size: 3em;
+    font-weight: bold;
+    padding: 100px 0;
+}
