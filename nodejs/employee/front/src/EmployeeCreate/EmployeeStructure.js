@@ -1,4 +1,4 @@
-import Joi from "joi";
+import Joi from "Joi";
 
 export const EmployeeStructure = [
     { field: 'firstName', type: 'text', label: 'שם פרטי', icon: 'user', joi: Joi.string().min(2).max(20).required() },

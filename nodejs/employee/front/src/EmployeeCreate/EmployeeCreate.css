@@ -1,0 +1,125 @@
+/* General form container styling */
+.employee-form-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    direction: rtl;
+    /* For Hebrew text */
+    text-align: right;
+}
+
+.employee-form-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 2em;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Form group styling */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.form-group label i {
+    margin-left: 8px;
+    /* Space between icon and text */
+    color: #007bff;
+}
+
+/* Input and select common styling */
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1.1em;
+    box-sizing: border-box;
+    /* Include padding in width */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+    outline: none;
+}
+
+/* Error message styling */
+.error-message {
+    color: #dc3545;
+    /* Red color for errors */
+    font-size: 0.9em;
+    margin-top: 5px;
+    text-align: right;
+}
+
+.input-error {
+    border-color: #dc3545 !important;
+    /* Red border for invalid fields */
+}
+
+/* Submit button styling */
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 20px;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+/* Font Awesome for icons (add this to your HTML <head> or public/index.html) */
+/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" /> */
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .employee-form-container {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .employee-form-container h2 {
+        font-size: 1.8em;
+    }
+
+    .form-group input,
+    .form-group select,
+    .submit-button {
+        font-size: 1em;
+        padding: 10px;
+    }
+}
