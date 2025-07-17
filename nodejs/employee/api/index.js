@@ -12,7 +12,8 @@ console.log('mongodb connection');
 const app = express();
 
 // מגדיר שהנתונים שאנו קולטים בגוף הבקשה הם מסוג ג'סון
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // הגדרות Cors
 // לאיזה דומיינים מאשר, מתודות ועוד

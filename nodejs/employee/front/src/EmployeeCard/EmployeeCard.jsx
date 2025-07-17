@@ -26,7 +26,7 @@ export default function EmployeeCard() {
                 employee ?
                 <div className="employee-card">
                     <div className="employee-card-header">
-                        <img src={`http://localhost:4000/images/${employee.image.name}`} className="employee-image" />
+                        <img src={`http://localhost:4000/employees/images/${employee.image._id}`} className="employee-image" />
                         <h2 className="employee-name">{employee.firstName} {employee.lastName}</h2>
                     </div>
 

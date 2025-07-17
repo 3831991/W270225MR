@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { Router } from 'express';
+import fs from 'fs'
 
 const Address = new Schema({
     city: String,
@@ -72,7 +73,29 @@ router.post('/', async (req, res) => {
     });
 
     const newEmployee = await employee.save();
+
+    // אם אין את התיקייה - צור אותה
+    if (!fs.existsSync('./images')) {
+        fs.mkdirSync('./images', { recursive: true });
+    }
+
+    // מחלץ את הקוד שמייצג את התמונה
+    const imageData = item.image.base64;
+    const matches = imageData.match(/^data:(.+);base64,(.+)$/);
+    const bas64 = matches[2];
+
+    // יוצר את התמונה באמצעות הקוד (Base64)
+    fs.writeFile(`./images/${newEmployee.image._id}`, Buffer.from(bas64, 'base64'), err => {
+
+    });
+
     res.send(newEmployee);
+});
+
+// Get image
+router.get('/images/:imageId', async (req, res) => {
+    const employee = await Employee.findOne({ 'image._id': req.params.imageId });
+    res.download(`./images/${req.params.imageId}`, employee.image.name);
 });
 
 export default router;

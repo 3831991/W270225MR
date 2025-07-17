@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import Joi from 'Joi';
 import './EmployeeCreate.css'; // We'll create this CSS file for styling
 import { JOI_HEBREW } from '../joi-hebrew';
@@ -57,6 +58,7 @@ const EmployeeCreate = () => {
     const [errors, setErrors] = useState({});
     // State to track if the form has been submitted
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const navigate = useNavigate();
     const [image, setImage] = useState({
         name: '',
         size: '',
@@ -137,7 +139,7 @@ const EmployeeCreate = () => {
     };
 
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitted(true); // Mark form as submitted
 
@@ -148,9 +150,17 @@ const EmployeeCreate = () => {
                 image,
             };
 
-            console.log('Form data is valid:', obj);
-            alert('טופס נשלח בהצלחה!');
-            // Here you would typically send the data to a server
+            const res = await fetch("http://localhost:4000/employees", {
+                credentials: 'include',
+                method: 'POST',
+                headers: { 'Content-type': 'application/json' },
+                body: JSON.stringify(obj),
+            });
+
+            if (res.ok) {
+                const item = await res.json();
+                navigate(`/employee/${item._id}`);
+            }
         } else {
             console.log('Form data is invalid:', errors);
         }
