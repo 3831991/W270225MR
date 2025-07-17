@@ -24,9 +24,10 @@ export const EmployeeStructure = [
     { field: 'city', type: 'text', label: 'עיר', icon: 'building', joi: Joi.string().min(2).max(50).required() },
     { field: 'street', type: 'text', label: 'רחוב', icon: 'map-marker', joi: Joi.string().min(2).max(100).required() },
     { field: 'house', type: 'text', label: 'מספר בית', icon: 'home', joi: Joi.string().min(1).max(10).required() },
-    { field: 'gender', type: 'select', label: 'מין', icon: 'venus-mars', joi: Joi.string().valid('זכר', 'נקבה').required().messages({
-        'any.only': 'יש לבחור מין'
+    { field: 'gender', type: 'select', label: 'מגדר', icon: 'venus-mars', joi: Joi.string().valid('זכר', 'נקבה').required().messages({
+        'any.only': 'יש לבחור מגדר'
     }) },
+    { field: 'image', type: 'file', label: 'תמונת פרופיל', icon: 'picture', joi: Joi.required() },
 ];
 
 const options = {
@@ -56,6 +57,12 @@ const EmployeeCreate = () => {
     const [errors, setErrors] = useState({});
     // State to track if the form has been submitted
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [image, setImage] = useState({
+        name: '',
+        size: '',
+        type: '',
+        base64: '',
+    });
 
     // Initialize formData with empty strings for all fields
     useEffect(() => {
@@ -77,6 +84,27 @@ const EmployeeCreate = () => {
         // Validate individual field on change if form has been submitted
         if (isSubmitted) {
             validateField(name, value);
+        }
+
+        if (e.target.files) {
+            const file = e.target.files[0];
+
+            if (['image/jpeg', 'image/png'].includes(file.type)) {
+                const reader = new FileReader();
+
+                reader.onload = ev => {
+                    setImage({
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        base64: ev.target.result,
+                    });
+                }
+    
+                reader.readAsDataURL(file);
+            } else {
+                setImage();
+            }
         }
     };
 
@@ -115,7 +143,12 @@ const EmployeeCreate = () => {
 
         const isValid = validateForm();
         if (isValid) {
-            console.log('Form data is valid:', formData);
+            const obj = {
+                ...formData,
+                image,
+            };
+
+            console.log('Form data is valid:', obj);
             alert('טופס נשלח בהצלחה!');
             // Here you would typically send the data to a server
         } else {
@@ -152,6 +185,7 @@ const EmployeeCreate = () => {
                                 value={formData[field.field] || ''}
                                 onChange={handleChange}
                                 className={errors[field.field] ? 'input-error' : ''}
+                                accept='image/jpeg, image/png'
                             />
                         )}
                         {errors[field.field] && (
@@ -159,6 +193,9 @@ const EmployeeCreate = () => {
                         )}
                     </div>
                 ))}
+
+                {image?.base64 && <div style={{ textAlign: 'center' }}><img src={image.base64} width={300} /></div>}
+
                 <button type="submit" className="submit-button">שלח</button>
             </form>
         </div>
