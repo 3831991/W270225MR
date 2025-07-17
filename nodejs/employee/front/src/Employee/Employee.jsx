@@ -17,6 +17,10 @@ export default function Employee() {
     return (
         <>
             <h1>ניהול עובדים</h1>
+            <Link to="/employee/create">
+                <button className='button'><i className='fa fa-plus'></i> עובד חדש</button>
+            </Link>
+
             <div className='cards'>
                 {
                     employees.map((e, i) => 
