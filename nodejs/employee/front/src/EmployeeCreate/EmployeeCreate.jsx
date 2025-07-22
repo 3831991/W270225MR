@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import Joi from 'Joi';
 import moment from 'moment';
 import './EmployeeCreate.css'; // We'll create this CSS file for styling
 import { JOI_HEBREW } from '../joi-hebrew';
+import { MyContext } from '../App';
 
 // Provided EmployeeStructure (assuming this is in a separate file like `EmployeeStructure.js`)
 export const EmployeeStructure = [
@@ -67,6 +68,7 @@ const EmployeeCreate = () => {
         base64: '',
     });
     const { employeeId } = useParams();
+    const { snackbar, setIsLoader } = useContext(MyContext);
 
     // Initialize formData with empty strings for all fields
     useEffect(() => {
@@ -102,6 +104,8 @@ const EmployeeCreate = () => {
     }, [employeeId]);
 
     const getEmployee = async () => {
+        setIsLoader(true);
+
         const res = await fetch(`http://localhost:4000/employees/${employeeId}`);
 
         if (res.ok) {
@@ -123,6 +127,8 @@ const EmployeeCreate = () => {
 
             setImage(item.image);
         }
+
+        setIsLoader(false);
     }
 
     // Handle input changes
@@ -143,6 +149,7 @@ const EmployeeCreate = () => {
 
             if (['image/jpeg', 'image/png'].includes(file.type)) {
                 const reader = new FileReader();
+                setIsLoader(true);
 
                 reader.onload = ev => {
                     setImage({
@@ -151,6 +158,8 @@ const EmployeeCreate = () => {
                         type: file.type,
                         base64: ev.target.result,
                     });
+
+                    setIsLoader(false);
                 }
     
                 reader.readAsDataURL(file);
@@ -192,6 +201,7 @@ const EmployeeCreate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitted(true); // Mark form as submitted
+        setIsLoader(true);
 
         const isValid = validateForm();
         if (isValid) {
@@ -216,8 +226,10 @@ const EmployeeCreate = () => {
                 }
             }
         } else {
-            console.log('Form data is invalid:', errors);
+            snackbar("יש להשלים את כל הנתונים");
         }
+
+        setIsLoader(false);
     };
 
     return (

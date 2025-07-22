@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import './Employee.css';
 import { useRef } from 'react';
+import { MyContext } from '../App';
 
 export default function Employee() {
     const [employeeClicked, setEmployeeClicked] = useState();
@@ -9,6 +10,7 @@ export default function Employee() {
     const [isMenu, setIsMenu] = useState(false);
     const menu = useRef();
     const navigate = useNavigate();
+    const { snackbar, setIsLoader } = useContext(MyContext);
 
     useEffect(() => {
         getData();
@@ -18,8 +20,12 @@ export default function Employee() {
     }, []);
 
     const getData = async () => {
+        setIsLoader(true);
+
         const res = await fetch("http://localhost:4000/employees");
         setEmployees(await res.json());
+
+        setIsLoader(false);
     }
 
     const rightClick = (ev, employee) => {
@@ -43,6 +49,8 @@ export default function Employee() {
             return;
         }
 
+        setIsLoader(true);
+
         const res = await fetch(`http://localhost:4000/employees/${id}`, {
             method: 'DELETE',
         });
@@ -50,6 +58,8 @@ export default function Employee() {
         if (res.ok) {
             setEmployees(employees.filter(e => e._id != id));
         }
+
+        setIsLoader(false);
     }
 
     const duplicate = () => {

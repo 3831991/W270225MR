@@ -1,17 +1,21 @@
 import { useNavigate, useParams } from 'react-router';
 import './EmployeeCard.css';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { MyContext } from '../App';
 
 export default function EmployeeCard() {
     const [employee, setEmployee] = useState();
     const { id } = useParams();
     const navigate = useNavigate();
+    const { snackbar, setIsLoader } = useContext(MyContext);
 
     useEffect(() => {
         getEmployee();
     }, [id]);
 
     const getEmployee = async () => {
+        setIsLoader(true);
+
         const res = await fetch(`http://localhost:4000/employees/${id}`);
 
         if (res.ok) {
@@ -19,6 +23,8 @@ export default function EmployeeCard() {
         } else {
             setEmployee(null);
         }
+
+        setIsLoader(false);
     }
 
     return (
