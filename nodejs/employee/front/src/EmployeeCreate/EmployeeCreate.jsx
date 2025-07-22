@@ -13,7 +13,7 @@ export const EmployeeStructure = [
         'string.length': 'מספר תעודת זהות חייב להיות 9 ספרות',
         'string.pattern': 'מספר תעודת זהות חייב להכיל ספרות בלבד'
     }) },
-    { field: 'phone', type: 'tel', label: 'טלפון', icon: 'phone', joi: Joi.string().pattern(/^\d{10}$/).required().messages({
+    { field: 'phone', type: 'tel', label: 'טלפון', icon: 'phone', joi: Joi.string().pattern(/^(?:(?:(\+?972|\(\+?972\)|\+?\(972\))(?:\s|\.|-)?([1-9]\d?))|(0[23489]{1})|(0[57]{1}[0-9]))(?:\s|\.|-)?([^0\D]{1}\d{2}(?:\s|\.|-)?\d{4})$/).required().messages({
         'string.pattern': 'מספר טלפון לא תקין (10 ספרות)'
     }) },
     { field: 'email', type: 'email', label: 'אימייל', icon: 'envelope', joi: Joi.string().email({ tlds: { allow: false } }).required().messages({
@@ -36,7 +36,7 @@ const options = {
     messages: {
         he: {
             ...JOI_HEBREW,
-            'string.pattern.base': 'הסיסמה צריכה לכלול לפחות 8 תווים, אות גדולה, אות קטנה, מספר, ותו מיוחד.',
+            'string.pattern.base': 'לא תקין'
         },
     },
     errors: {
@@ -180,16 +180,20 @@ const EmployeeCreate = () => {
                 image,
             };
 
-            const res = await fetch("http://localhost:4000/employees", {
+            const res = await fetch("http://localhost:4000/employees" + (employeeId ? `/${employeeId}` : ''), {
                 credentials: 'include',
-                method: 'POST',
+                method: employeeId ? 'PUT' : 'POST',
                 headers: { 'Content-type': 'application/json' },
                 body: JSON.stringify(obj),
             });
 
             if (res.ok) {
-                const item = await res.json();
-                navigate(`/employee/${item._id}`);
+                if (employeeId) {
+                    navigate(`/employee/${employeeId}`);
+                } else {
+                    const item = await res.json();
+                    navigate(`/employee/${item._id}`);
+                }
             }
         } else {
             console.log('Form data is invalid:', errors);
