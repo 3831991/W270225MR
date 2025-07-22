@@ -35,6 +35,16 @@
     color: white;
     font-size: 1.4em;
     margin: auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.circle>div {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    inset: 0;
 }
 
 a {

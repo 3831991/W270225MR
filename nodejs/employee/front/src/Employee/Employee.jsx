@@ -26,7 +26,11 @@ export default function Employee() {
                     employees.map((e, i) => 
                         <Link key={e._id} to={`/employee/${e._id}`}>
                             <div className='Card'>
-                                <div className='circle' style={{ backgroundColor: `hsl(${i * 40}deg 83% 47%)` }}>{e.firstName[0]}</div>
+                                <div className='circle' style={{ backgroundColor: `hsl(${i * 40}deg 83% 47%)` }}>
+                                    {e.firstName[0]}
+                                    {/* התמונה כרקע על אלמנט שמסה את הכל */}
+                                    <div style={{ backgroundImage: `url('http://localhost:4000/employees/images/${e.image._id}')` }}></div>    
+                                </div>
                                 <h3>{e.firstName} {e.lastName}</h3>
                             </div>
                         </Link>
