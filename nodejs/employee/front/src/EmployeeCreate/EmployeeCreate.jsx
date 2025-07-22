@@ -70,11 +70,31 @@ const EmployeeCreate = () => {
 
     // Initialize formData with empty strings for all fields
     useEffect(() => {
-        const initialData = EmployeeStructure.reduce((acc, field) => {
-            acc[field.field] = '';
-            return acc;
-        }, {});
-        setFormData(initialData);
+        if (sessionStorage.getItem('duplicate')) {
+            const item = JSON.parse(sessionStorage.getItem('duplicate'));
+
+            setFormData({
+                firstName: item.firstName,
+                lastName: item.lastName,
+                personalId: item.personalId,
+                phone: item.phone,
+                email: item.email,
+                birthDate: moment(item.birthDate).format('YYYY-MM-DD'),
+                city: item.address.city,
+                street: item.address.street,
+                house: item.address.house,
+                gender: item.gender,
+                image: '',
+            });
+
+            sessionStorage.removeItem('duplicate');
+        } else {
+            const initialData = EmployeeStructure.reduce((acc, field) => {
+                acc[field.field] = '';
+                return acc;
+            }, {});
+            setFormData(initialData);
+        }
     }, []);
 
     useEffect(() => {

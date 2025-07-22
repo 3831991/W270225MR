@@ -52,6 +52,11 @@ export default function Employee() {
         }
     }
 
+    const duplicate = () => {
+        sessionStorage.setItem('duplicate', JSON.stringify(employeeClicked));
+        navigate('/employee/create');
+    }
+
     return (
         <>
             <h1>ניהול עובדים</h1>
@@ -78,7 +83,7 @@ export default function Employee() {
                 <Link to={`/employee/${employeeClicked?._id}`} className="menu-item"><i className='fa fa-eye'></i> צפייה</Link>
                 <Link to={`/employee/edit/${employeeClicked?._id}`} className="menu-item"><i className='fa fa-edit'></i> עריכה</Link>
                 <hr className="menu-separator" />
-                <a href="#" className="menu-item"><i className='fa fa-copy'></i> שכפול</a>
+                <a href="#" className="menu-item" onClick={duplicate}><i className='fa fa-copy'></i> שכפול</a>
                 <a href="#" className="menu-item" onClick={() => remove(employeeClicked?._id)}><i className='fa fa-trash'></i> מחיקה</a>
             </div>
         </>
