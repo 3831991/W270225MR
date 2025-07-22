@@ -98,4 +98,14 @@ router.get('/images/:imageId', async (req, res) => {
     res.download(`./images/${req.params.imageId}`, employee.image.name);
 });
 
+// Remove employee
+router.delete('/:id',  async (req, res) => {
+    try {
+        await Employee.findByIdAndDelete(req.params.id);
+        res.end();
+    } catch (err) {
+        res.status(403).send({ message: '' });
+    }
+});
+
 export default router;

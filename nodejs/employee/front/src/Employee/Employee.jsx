@@ -37,6 +37,20 @@ export default function Employee() {
         setIsMenu(true);
     }
 
+    const remove = async id => {
+        if (!confirm("האם למחוק את העובד?")) {
+            return;
+        }
+
+        const res = await fetch(`http://localhost:4000/employees/${id}`, {
+            method: 'DELETE',
+        });
+
+        if (res.ok) {
+            setEmployees(employees.filter(e => e._id != id));
+        }
+    }
+
     return (
         <>
             <h1>ניהול עובדים</h1>
@@ -64,7 +78,7 @@ export default function Employee() {
                 <a href="#" className="menu-item"><i className='fa fa-edit'></i> עריכה</a>
                 <hr className="menu-separator" />
                 <a href="#" className="menu-item"><i className='fa fa-copy'></i> שכפול</a>
-                <a href="#" className="menu-item"><i className='fa fa-trash'></i> מחיקה</a>
+                <a href="#" className="menu-item" onClick={() => remove(employeeClicked?._id)}><i className='fa fa-trash'></i> מחיקה</a>
             </div>
         </>
     )
