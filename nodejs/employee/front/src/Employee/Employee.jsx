@@ -47,7 +47,7 @@ export default function Employee() {
             <div className='cards'>
                 {
                     employees.map((e, i) => 
-                        <div className='Card' onContextMenu={ev => rightClick(ev, e)} key={e._id}>
+                        <div className={'Card' + (isMenu && employeeClicked._id == e._id ? ' active' : '')} onContextMenu={ev => rightClick(ev, e)} key={e._id}>
                             <div className='circle' style={{ backgroundColor: `hsl(${i * 40}deg 83% 47%)` }}>
                                 {e.firstName[0]}
                                 {/* התמונה כרקע על אלמנט שמסה את הכל */}

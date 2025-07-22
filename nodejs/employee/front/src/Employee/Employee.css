@@ -15,6 +15,10 @@
     transition: 0.3s;
 }
 
+.Card.active {
+    box-shadow: 0 0 0 6px #673AB7 inset;
+}
+
 /* .Card:hover {
     scale: 1.05;
 } */
