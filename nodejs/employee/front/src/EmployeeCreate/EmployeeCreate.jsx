@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import Joi from 'Joi';
+import moment from 'moment';
 import './EmployeeCreate.css'; // We'll create this CSS file for styling
 import { JOI_HEBREW } from '../joi-hebrew';
 
@@ -65,6 +66,7 @@ const EmployeeCreate = () => {
         type: '',
         base64: '',
     });
+    const { employeeId } = useParams();
 
     // Initialize formData with empty strings for all fields
     useEffect(() => {
@@ -74,6 +76,34 @@ const EmployeeCreate = () => {
         }, {});
         setFormData(initialData);
     }, []);
+
+    useEffect(() => {
+        getEmployee();
+    }, [employeeId]);
+
+    const getEmployee = async () => {
+        const res = await fetch(`http://localhost:4000/employees/${employeeId}`);
+
+        if (res.ok) {
+            const item = await res.json();
+            
+            setFormData({
+                firstName: item.firstName,
+                lastName: item.lastName,
+                personalId: item.personalId,
+                phone: item.phone,
+                email: item.email,
+                birthDate: moment(item.birthDate).format('YYYY-MM-DD'),
+                city: item.address.city,
+                street: item.address.street,
+                house: item.address.house,
+                gender: item.gender,
+                image: '',
+            });
+
+            setImage(item.image);
+        }
+    }
 
     // Handle input changes
     const handleChange = (e) => {
@@ -168,7 +198,7 @@ const EmployeeCreate = () => {
 
     return (
         <div className="employee-form-container">
-            <h2>טופס פרטי עובד</h2>
+            <h2>{employeeId ? 'עריכת' : 'הוספת'} עובד</h2>
             <form className="employee-form" onSubmit={handleSubmit} noValidate>
                 {EmployeeStructure.map((field) => (
                     <div className="form-group" key={field.field}>
@@ -205,6 +235,7 @@ const EmployeeCreate = () => {
                 ))}
 
                 {image?.base64 && <div style={{ textAlign: 'center' }}><img src={image.base64} width={300} /></div>}
+                {image?._id && !image?.base64 && <div style={{ textAlign: 'center' }}><img src={`http://localhost:4000/employees/images/${image._id}`} width={300} /></div>}
 
                 <button type="submit" className="submit-button">שלח</button>
             </form>

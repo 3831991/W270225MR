@@ -75,7 +75,7 @@ export default function Employee() {
 
             <div className="context-menu" ref={menu} style={{ display: isMenu ? 'block' : 'none' }}>
                 <Link to={`/employee/${employeeClicked?._id}`} className="menu-item"><i className='fa fa-eye'></i> צפייה</Link>
-                <a href="#" className="menu-item"><i className='fa fa-edit'></i> עריכה</a>
+                <Link to={`/employee/edit/${employeeClicked?._id}`} className="menu-item"><i className='fa fa-edit'></i> עריכה</Link>
                 <hr className="menu-separator" />
                 <a href="#" className="menu-item"><i className='fa fa-copy'></i> שכפול</a>
                 <a href="#" className="menu-item" onClick={() => remove(employeeClicked?._id)}><i className='fa fa-trash'></i> מחיקה</a>

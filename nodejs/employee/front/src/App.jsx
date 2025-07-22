@@ -10,6 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Employee />} />
         <Route path="/employee/create" element={<EmployeeCreate />} />
+        <Route path="/employee/edit/:employeeId" element={<EmployeeCreate />} />
         <Route path="/employee/:id" element={<EmployeeCard />} />
       </Routes>
     </>
