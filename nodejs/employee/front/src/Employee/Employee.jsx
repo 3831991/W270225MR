@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import './Employee.css';
 import { useRef } from 'react';
 
@@ -8,6 +8,7 @@ export default function Employee() {
     const [employees, setEmployees] = useState([]);
     const [isMenu, setIsMenu] = useState(false);
     const menu = useRef();
+    const navigate = useNavigate();
 
     useEffect(() => {
         getData();
@@ -61,10 +62,10 @@ export default function Employee() {
             <div className='cards'>
                 {
                     employees.map((e, i) => 
-                        <div className={'Card' + (isMenu && employeeClicked._id == e._id ? ' active' : '')} onContextMenu={ev => rightClick(ev, e)} key={e._id}>
+                        <div className={'Card' + (isMenu && employeeClicked._id == e._id ? ' active' : '')} onContextMenu={ev => rightClick(ev, e)} onDoubleClick={() => navigate(`/employee/${e._id}`)} key={e._id}>
                             <div className='circle' style={{ backgroundColor: `hsl(${i * 40}deg 83% 47%)` }}>
                                 {e.firstName[0]}
-                                {/* התמונה כרקע על אלמנט שמסה את הכל */}
+                                {/* התמונה כרקע על אלמנט שמכסה את הכל */}
                                 <div style={{ backgroundImage: `url('http://localhost:4000/employees/images/${e.image._id}')` }}></div>    
                             </div>
                             <h3>{e.firstName} {e.lastName}</h3>

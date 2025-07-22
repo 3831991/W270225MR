@@ -1,10 +1,11 @@
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import './EmployeeCard.css';
 import { useEffect, useState } from 'react';
 
 export default function EmployeeCard() {
     const [employee, setEmployee] = useState();
     const { id } = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
         getEmployee();
@@ -45,6 +46,8 @@ export default function EmployeeCard() {
                     <div className="employee-gender">
                         <p><strong>מין:</strong> {employee.gender}</p>
                     </div>
+
+                    <button className='button' onClick={() => navigate(`/employee/edit/${employee._id}`)}><i className='fa fa-edit'></i> עריכה</button>    
                 </div> : 
                 (employee === null ? <div className='EmployeeEmpty'>לא נמצא עובד - {id}</div> : '')
             }
