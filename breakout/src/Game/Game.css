@@ -1,0 +1,18 @@
+.Game {
+    width: 800px;
+    height: 600px;
+    background-color: #ffffff98;
+    margin: auto;
+}
+
+.Game header {
+    padding: 6px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 6px;
+}
+
+.Brick {
+    background-color: brown;
+    height: 15px;
+}
