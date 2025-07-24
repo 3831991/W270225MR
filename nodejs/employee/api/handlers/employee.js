@@ -2,6 +2,7 @@ import guard from '../guard.js';
 import { model, Schema } from "mongoose";
 import { Router } from 'express';
 import fs from 'fs';
+import jwt from 'jsonwebtoken';
 
 const Address = new Schema({
     city: String,
@@ -25,7 +26,7 @@ const EmployeeSchema = new Schema({
     address: Address,
     image: Image,
     gender: String,
-    // userId: Schema.Types.ObjectId,
+    userCreatedId: Schema.Types.ObjectId,
 });
 
 export const Employee = model("employees", EmployeeSchema);
@@ -34,29 +35,41 @@ const router = Router();
 
 // Get all employees
 router.get('/', guard, async (req, res) => {
-    const data = await Employee.find();
+    const user = jwt.decode(req.headers.authorization);
+
+    const data = await Employee.find({ userCreatedId: user.userId });
     res.send(data);
 });
 
 // Get employee
 router.get('/:id', guard, async (req, res) => {
     try {
-        const data = await Employee.findById(req.params.id);
+        const user = jwt.decode(req.headers.authorization);
+
+        const data = await Employee.findOne({ _id: req.params.id, userCreatedId: user.userId });
+
+        if (!data) {
+            res.status(403).send({ message: 'לא נמצא עובד' });
+        }
+
         res.send(data);
     } catch (err) {
-        res.status(403).send({ message: '' });
+        res.status(403).send({ message: 'לא נמצא עובד' });
     }
 });
 
 // Get image
 router.get('/images/:imageId', guard, async (req, res) => {
-    const employee = await Employee.findOne({ 'image._id': req.params.imageId });
+    const user = jwt.decode(req.headers.authorization || req.query.authorization);
+
+    const employee = await Employee.findOne({ 'image._id': req.params.imageId, userCreatedId: user.userId });
     res.download(`./images/${req.params.imageId}`, employee.image.name);
 });
 
 // Add employee
 router.post('/', guard, async (req, res) => {
     const item = req.body;
+    const user = jwt.decode(req.headers.authorization);
 
     const employee = new Employee({
         firstName: item.firstName,
@@ -76,7 +89,7 @@ router.post('/', guard, async (req, res) => {
             type: item.image.type,
         },
         gender: item.gender,
-        // userId: item.userId,
+        userCreatedId: user.userId,
     });
 
     const newEmployee = await employee.save();
@@ -106,7 +119,8 @@ router.put('/:id', guard, async (req, res) => {
     const item = req.body;
 
     try {
-        const employee = await Employee.findById(req.params.id);
+        const user = jwt.decode(req.headers.authorization);
+        const employee = await Employee.findOne({ _id: req.params.id, userCreatedId: user.userId });
         
         if (!employee) {
             return res.status(403).send({ message: 'עובד לא קיים' });
@@ -165,6 +179,13 @@ router.put('/:id', guard, async (req, res) => {
 // Remove employee
 router.delete('/:id', guard, async (req, res) => {
     try {
+        const user = jwt.decode(req.headers.authorization);
+        const employee = await Employee.findOne({ _id: req.params.id, userCreatedId: user.userId });
+        
+        if (!employee) {
+            return res.status(403).send({ message: 'עובד לא קיים' });
+        }
+
         await Employee.findByIdAndDelete(req.params.id);
         res.end();
     } catch (err) {
