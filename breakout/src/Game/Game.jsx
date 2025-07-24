@@ -14,6 +14,7 @@ export default function Game() {
     
     const horizontal = useRef('top');
     const vertical = useRef('left');
+    const interval = useRef();
 
     const game = useRef();
     const ball = useRef();
@@ -41,7 +42,8 @@ export default function Game() {
     useEffect(() => {
         window.addEventListener("keydown", handleKeyDown);
 
-        setInterval(() => move('left'), 20);
+        clearInterval(interval.current);
+        interval.current = setInterval(() => move('left'), 10);
 
         return () => window.removeEventListener("keydown", handleKeyDown)
     }, []);
@@ -76,6 +78,8 @@ export default function Game() {
             const max = game.current.offsetHeight - ball.current.offsetHeight - padding;
 
             if (ball.current.offsetTop >= max) {
+                // clearInterval(interval.current);
+
                 horizontal.current = 'top';
                 return;
             }
