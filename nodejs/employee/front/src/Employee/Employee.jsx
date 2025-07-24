@@ -98,6 +98,8 @@ export default function Employee() {
                 }
             </div>
 
+            { !employees.length && <p className='noData'>אין עדיין עובדים..</p> }
+
             <div className="context-menu" ref={menu} style={{ display: isMenu ? 'block' : 'none' }}>
                 <Link to={`/employee/${employeeClicked?._id}`} className="menu-item"><i className='fa fa-eye'></i> צפייה</Link>
                 <Link to={`/employee/edit/${employeeClicked?._id}`} className="menu-item"><i className='fa fa-edit'></i> עריכה</Link>

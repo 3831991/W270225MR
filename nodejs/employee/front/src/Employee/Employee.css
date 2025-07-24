@@ -163,3 +163,9 @@ a {
     border-top: 1px solid #eee;
     margin: 8px 0;
 }
+
+.noData {
+    color: white;
+    font-size: 1.5em;
+    padding: 0 16px;
+}
