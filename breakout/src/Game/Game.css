@@ -6,6 +6,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
 }
 
 .Game header {
@@ -30,6 +31,8 @@ footer {
     width: 100px;
     background-color: #c249ff;
     border-radius: 10px;
+    position: absolute;
+    transition: 0.1s;
 }
 
 .Ball {
@@ -37,4 +40,11 @@ footer {
     width: 20px;
     background-color: #d47800;
     border-radius: 50%;
+    position: absolute;
+    /* transition: 0.1s; */
+}
+
+.Game footer {
+    position: relative;
+    height: 18px;
 }
