@@ -8,6 +8,7 @@ export default function EmployeeCard() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { snackbar, setIsLoader } = useContext(MyContext);
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         getEmployee();
@@ -16,7 +17,11 @@ export default function EmployeeCard() {
     const getEmployee = async () => {
         setIsLoader(true);
 
-        const res = await fetch(`http://localhost:4000/employees/${id}`);
+        const res = await fetch(`http://localhost:4000/employees/${id}`, {
+            headers: {
+                'Authorization': localStorage.getItem('token'),
+            },
+        });
 
         if (res.ok) {
             setEmployee(await res.json());
@@ -29,11 +34,14 @@ export default function EmployeeCard() {
 
     return (
         <>
+            <br />
+            <button className='button' onClick={() => navigate(`/`)}><i className='fa fa-arrow-right'></i> לרשימת העובדים</button>    
+
             {
                 employee ?
                 <div className="employee-card">
                     <div className="employee-card-header">
-                        <img src={`http://localhost:4000/employees/images/${employee.image._id}`} className="employee-image" />
+                        <img src={`http://localhost:4000/employees/images/${employee.image._id}?authorization=${token}`} className="employee-image" />
                         <h2 className="employee-name">{employee.firstName} {employee.lastName}</h2>
                     </div>
 

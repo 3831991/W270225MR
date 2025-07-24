@@ -11,6 +11,7 @@ export default function Employee() {
     const menu = useRef();
     const navigate = useNavigate();
     const { snackbar, setIsLoader } = useContext(MyContext);
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         getData();
@@ -22,7 +23,11 @@ export default function Employee() {
     const getData = async () => {
         setIsLoader(true);
 
-        const res = await fetch("http://localhost:4000/employees");
+        const res = await fetch("http://localhost:4000/employees", {
+            headers: {
+                'Authorization': localStorage.getItem('token'),
+            },
+        });
         setEmployees(await res.json());
 
         setIsLoader(false);
@@ -53,6 +58,9 @@ export default function Employee() {
 
         const res = await fetch(`http://localhost:4000/employees/${id}`, {
             method: 'DELETE',
+            headers: {
+                'Authorization': localStorage.getItem('token'),
+            },
         });
 
         if (res.ok) {
@@ -82,7 +90,7 @@ export default function Employee() {
                             <div className='circle' style={{ backgroundColor: `hsl(${i * 40}deg 83% 47%)` }}>
                                 {e.firstName[0]}
                                 {/* התמונה כרקע על אלמנט שמכסה את הכל */}
-                                <div style={{ backgroundImage: `url('http://localhost:4000/employees/images/${e.image._id}')` }}></div>    
+                                <div style={{ backgroundImage: `url('http://localhost:4000/employees/images/${e.image._id}?authorization=${token}')` }}></div>    
                             </div>
                             <h3>{e.firstName} {e.lastName}</h3>
                         </div>

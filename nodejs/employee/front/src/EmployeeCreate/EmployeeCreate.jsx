@@ -61,6 +61,7 @@ const EmployeeCreate = () => {
     // State to track if the form has been submitted
     const [isSubmitted, setIsSubmitted] = useState(false);
     const navigate = useNavigate();
+    const token = localStorage.getItem('token');
     const [image, setImage] = useState({
         name: '',
         size: '',
@@ -106,7 +107,11 @@ const EmployeeCreate = () => {
     const getEmployee = async () => {
         setIsLoader(true);
 
-        const res = await fetch(`http://localhost:4000/employees/${employeeId}`);
+        const res = await fetch(`http://localhost:4000/employees/${employeeId}`, {
+            headers: {
+                'Authorization': localStorage.getItem('token'),
+            },
+        });
 
         if (res.ok) {
             const item = await res.json();
@@ -214,7 +219,10 @@ const EmployeeCreate = () => {
             const res = await fetch("http://localhost:4000/employees" + (employeeId ? `/${employeeId}` : ''), {
                 credentials: 'include',
                 method: employeeId ? 'PUT' : 'POST',
-                headers: { 'Content-type': 'application/json' },
+                headers: {
+                    'Content-type': 'application/json',
+                    'Authorization': localStorage.getItem('token'),
+                },
                 body: JSON.stringify(obj),
             });
 
@@ -236,49 +244,54 @@ const EmployeeCreate = () => {
     };
 
     return (
-        <div className="employee-form-container">
-            <h2>{employeeId ? 'עריכת' : 'הוספת'} עובד</h2>
-            <form className="employee-form" onSubmit={handleSubmit} noValidate>
-                {EmployeeStructure.map((field) => (
-                    <div className="form-group" key={field.field}>
-                        <label htmlFor={field.field}>
-                            <i className={`fa fa-${field.icon}`}></i> {field.label}:
-                        </label>
-                        {field.type === 'select' ? (
-                            <select
-                                id={field.field}
-                                name={field.field}
-                                value={formData[field.field] || ''}
-                                onChange={handleChange}
-                                className={errors[field.field] ? 'input-error' : ''}
-                            >
-                                <option value="" disabled>בחר...</option>
-                                <option value="זכר">זכר</option>
-                                <option value="נקבה">נקבה</option>
-                            </select>
-                        ) : (
-                            <input
-                                type={field.type}
-                                id={field.field}
-                                name={field.field}
-                                value={formData[field.field] || ''}
-                                onChange={handleChange}
-                                className={errors[field.field] ? 'input-error' : ''}
-                                accept='image/jpeg, image/png'
-                            />
-                        )}
-                        {errors[field.field] && (
-                            <div className="error-message">{errors[field.field]}</div>
-                        )}
-                    </div>
-                ))}
+        <>
+            <br />
+            <button className='button' onClick={() => navigate(`/`)}><i className='fa fa-arrow-right'></i> לרשימת העובדים</button>    
 
-                {image?.base64 && <div style={{ textAlign: 'center' }}><img src={image.base64} width={300} /></div>}
-                {image?._id && !image?.base64 && <div style={{ textAlign: 'center' }}><img src={`http://localhost:4000/employees/images/${image._id}`} width={300} /></div>}
+            <div className="employee-form-container">
+                <h2>{employeeId ? 'עריכת' : 'הוספת'} עובד</h2>
+                <form className="employee-form" onSubmit={handleSubmit} noValidate>
+                    {EmployeeStructure.map((field) => (
+                        <div className="form-group" key={field.field}>
+                            <label htmlFor={field.field}>
+                                <i className={`fa fa-${field.icon}`}></i> {field.label}:
+                            </label>
+                            {field.type === 'select' ? (
+                                <select
+                                    id={field.field}
+                                    name={field.field}
+                                    value={formData[field.field] || ''}
+                                    onChange={handleChange}
+                                    className={errors[field.field] ? 'input-error' : ''}
+                                >
+                                    <option value="" disabled>בחר...</option>
+                                    <option value="זכר">זכר</option>
+                                    <option value="נקבה">נקבה</option>
+                                </select>
+                            ) : (
+                                <input
+                                    type={field.type}
+                                    id={field.field}
+                                    name={field.field}
+                                    value={formData[field.field] || ''}
+                                    onChange={handleChange}
+                                    className={errors[field.field] ? 'input-error' : ''}
+                                    accept='image/jpeg, image/png'
+                                />
+                            )}
+                            {errors[field.field] && (
+                                <div className="error-message">{errors[field.field]}</div>
+                            )}
+                        </div>
+                    ))}
 
-                <button type="submit" className="submit-button">שלח</button>
-            </form>
-        </div>
+                    {image?.base64 && <div style={{ textAlign: 'center' }}><img src={image.base64} width={300} /></div>}
+                    {image?._id && !image?.base64 && <div style={{ textAlign: 'center' }}><img src={`http://localhost:4000/employees/images/${image._id}?authorization=${token}`} width={300} /></div>}
+
+                    <button type="submit" className="submit-button">שלח</button>
+                </form>
+            </div>
+        </>
     );
 };
 
