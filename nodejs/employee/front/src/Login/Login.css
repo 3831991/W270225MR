@@ -1,0 +1,99 @@
+.Login form {
+    width: 250px;
+    margin: 16px auto;
+    background-color: #b4efff;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 0 3px #989898;
+}
+
+l.Login abel {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.Login input,
+.Login textarea {
+    display: block;
+    border: 1px solid black;
+    padding: 8px 12px;
+    border-radius: 5px;
+    margin-top: 3px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.Login textarea {
+    resize: none;
+}
+
+.Login button {
+    margin-top: 24px;
+    background-color: #282c34;
+    display: block;
+    width: 100%;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    transition: 0.3s;
+}
+
+.Login button:not([disabled]):hover {
+    scale: 1.05;
+}
+
+.Login button[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+button.logout {
+    display: inline;
+    width: initial;
+    margin: 0 3px;
+    font-size: 12px;
+    padding: 4px 8px;
+    background-color: red;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button.logout:hover {
+    background-color: rgb(199, 0, 0);
+}
+
+button.logout:active {
+    scale: 1.2;
+}
+
+.Login label {
+    text-align: right;
+}
+
+.Login .errorField input {
+    border-color: #c70000;
+    outline: 0;
+    border-width: 2px;
+}
+
+.Login .error {
+    color: #c70000;
+    font-weight: bold;
+}
+
+.Login a {
+    color: white;
+    text-align: center;
+    display: block;
+}
+
+.Login .noData {
+    width: 300px;
+    font-size: 2em;
+    color: white;
+    font-weight: bold;
+}
