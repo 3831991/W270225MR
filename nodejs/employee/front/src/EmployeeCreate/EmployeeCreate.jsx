@@ -204,6 +204,7 @@ const EmployeeCreate = () => {
         setIsLoader(true);
 
         const isValid = validateForm();
+
         if (isValid) {
             const obj = {
                 ...formData,
@@ -220,9 +221,11 @@ const EmployeeCreate = () => {
             if (res.ok) {
                 if (employeeId) {
                     navigate(`/employee/${employeeId}`);
+                    snackbar("העובד נשמר בהצלחה");
                 } else {
                     const item = await res.json();
                     navigate(`/employee/${item._id}`);
+                    snackbar("העובד נוסף בהצלחה");
                 }
             }
         } else {

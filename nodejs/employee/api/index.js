@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // זה יוצר השהייה של דקה, ע"מ לתת חוויה של שרת אמיתי
 app.use((req, res, next) => {
-    setTimeout(next, 1000);
+    setTimeout(next, 300);
 });
 
 // הגדרות Cors

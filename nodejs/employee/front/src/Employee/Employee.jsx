@@ -57,6 +57,7 @@ export default function Employee() {
 
         if (res.ok) {
             setEmployees(employees.filter(e => e._id != id));
+            snackbar("העובד נמחק בהצלחה");
         }
 
         setIsLoader(false);
