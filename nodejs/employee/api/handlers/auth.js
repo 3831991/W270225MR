@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
-export const JWT_SECRET = "W270225MR_THIS_IS_MY_SECRET_5456f4s56d4f56ds4f56ds";
+import { JWT_SECRET } from "../config.js";
 import guard from '../guard.js';
 
 const schema = new mongoose.Schema({

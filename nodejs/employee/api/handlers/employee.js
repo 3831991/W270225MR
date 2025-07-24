@@ -1,6 +1,7 @@
+import guard from '../guard.js';
 import { model, Schema } from "mongoose";
 import { Router } from 'express';
-import fs from 'fs'
+import fs from 'fs';
 
 const Address = new Schema({
     city: String,
@@ -32,13 +33,13 @@ export const Employee = model("employees", EmployeeSchema);
 const router = Router();
 
 // Get all employees
-router.get('/',  async (req, res) => {
+router.get('/', guard, async (req, res) => {
     const data = await Employee.find();
     res.send(data);
 });
 
 // Get employee
-router.get('/:id',  async (req, res) => {
+router.get('/:id', guard, async (req, res) => {
     try {
         const data = await Employee.findById(req.params.id);
         res.send(data);
@@ -48,13 +49,13 @@ router.get('/:id',  async (req, res) => {
 });
 
 // Get image
-router.get('/images/:imageId', async (req, res) => {
+router.get('/images/:imageId', guard, async (req, res) => {
     const employee = await Employee.findOne({ 'image._id': req.params.imageId });
     res.download(`./images/${req.params.imageId}`, employee.image.name);
 });
 
 // Add employee
-router.post('/', async (req, res) => {
+router.post('/', guard, async (req, res) => {
     const item = req.body;
 
     const employee = new Employee({
@@ -101,7 +102,7 @@ router.post('/', async (req, res) => {
 });
 
 // Edit employee
-router.put('/:id', async (req, res) => {
+router.put('/:id', guard, async (req, res) => {
     const item = req.body;
 
     try {
@@ -162,7 +163,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Remove employee
-router.delete('/:id',  async (req, res) => {
+router.delete('/:id', guard, async (req, res) => {
     try {
         await Employee.findByIdAndDelete(req.params.id);
         res.end();

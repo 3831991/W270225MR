@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from './handlers/auth.js';
+import { JWT_SECRET } from './config.js';
 
 export default (req, res, next) => {
     jwt.verify(req.headers.authorization, JWT_SECRET, (err, data) => {
