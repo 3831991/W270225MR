@@ -1,8 +1,11 @@
 .Game {
     width: 800px;
     height: 600px;
-    background-color: #ffffff98;
+    background-color: #434343;
     margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .Game header {
@@ -13,6 +16,25 @@
 }
 
 .Brick {
-    background-color: brown;
+    background-color: #00BCD4;
     height: 15px;
+    border-radius: 3px;
+}
+
+footer {
+    padding: 6px;
+}
+
+.Paddle {
+    height: 15px;
+    width: 100px;
+    background-color: #c249ff;
+    border-radius: 10px;
+}
+
+.Ball {
+    height: 20px;
+    width: 20px;
+    background-color: #d47800;
+    border-radius: 50%;
 }

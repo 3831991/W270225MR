@@ -23,6 +23,12 @@ export default function Game() {
                     <div className='Brick'></div>
                 )}
             </header>
+
+            <div className='Ball'></div>
+
+            <footer>
+                <div className='Paddle'></div>
+            </footer>
         </div>
     )
 }
