@@ -7,7 +7,7 @@
     box-shadow: 0 0 3px #989898;
 }
 
-l.Login abel {
+.Login label {
     display: block;
     margin-bottom: 8px;
 }
@@ -49,25 +49,6 @@ l.Login abel {
 .Login button[disabled] {
     cursor: not-allowed;
     opacity: 0.6;
-}
-
-button.logout {
-    display: inline;
-    width: initial;
-    margin: 0 3px;
-    font-size: 12px;
-    padding: 4px 8px;
-    background-color: red;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-button.logout:hover {
-    background-color: rgb(199, 0, 0);
-}
-
-button.logout:active {
-    scale: 1.2;
 }
 
 .Login label {
