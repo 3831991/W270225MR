@@ -1,24 +1,39 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
 import { icons } from "../config";
+import { MyContext } from "../App";
 
 export default function FilesManagers() {
     const [files, setFiles] = useState([]);
+    const [fileClicked, setFileClicked] = useState();
+    const [isMenu, setIsMenu] = useState(false);
+    const menu = useRef();
     const navigate = useNavigate();
     const { folderId } = useParams();
+    const { snackbar, loader } = useContext(MyContext);
 
     const getData = async () => {
+        loader(true);
+
         const res = await fetch(`http://localhost:5000/files/${folderId || 'main'}`);
 
         if (res.ok) {
             const data = await res.json();
             setFiles(data);
         }
+
+        loader(false);
     }
 
     useEffect(() => {
         getData();
     }, [folderId]);
+    
+    useEffect(() => {
+        window.addEventListener("click", () => setIsMenu(false));
+
+        return () => window.removeEventListener("click", () => {});
+    }, []);
 
     const createFolder = async () => {
         const folderName = prompt("בחר שם לתיקייה");
@@ -26,6 +41,8 @@ export default function FilesManagers() {
         if (!folderName) {
             return;
         }
+
+        loader(true);
 
         const formData = new FormData();
         formData.append("folderName", folderName);
@@ -38,7 +55,10 @@ export default function FilesManagers() {
         if (res.ok) {
             const folder = await res.json();
             setFiles([...files, folder]);
+            snackbar("התיקייה נוצרה בהצלחה");
         }
+
+        loader(false);
     }
 
     const click = file => {
@@ -55,6 +75,63 @@ export default function FilesManagers() {
 
     const home = () => {
         navigate('/');
+    }
+
+    const rename = async () => {
+        const folderName = prompt("בחר שם לתיקייה", fileClicked.fileName);
+
+        if (!folderName) {
+            return;
+        }
+
+        loader(true);
+
+        const res = await fetch(`http://localhost:5000/files/${fileClicked._id}/rename/${folderName}`, {
+            method: 'PATCH',
+        });
+
+        if (res.ok) {
+            fileClicked.fileName = folderName;
+            setFiles([...files]);
+            snackbar("שם התיקייה שונה בהצלחה");
+        }
+
+        loader(false);
+    }
+
+    const remove = async () => {
+        if (!confirm("האם אתה בטוח כי ברצונך למחוק את הקובץ?")) {
+            return;
+        }
+
+        loader(true);
+
+        const res = await fetch(`http://localhost:5000/files/${fileClicked._id}`, {
+            method: 'DELETE',
+        });
+
+        if (res.ok) {
+            setFiles(prev => prev.filter(x => x._id != fileClicked._id));
+            snackbar("התיקייה נמחקה בהצלחה");
+        }
+
+        loader(false);
+    }
+
+    const rightClick = (ev, file) => {
+        ev.preventDefault();
+        setFileClicked(file);
+
+        const bodyWidth = document.body.offsetWidth;
+        let leftPosition = ev.pageX;
+
+        if (ev.pageX + menu.current.offsetWidth > bodyWidth) {
+            leftPosition -= menu.current.offsetWidth;
+        }
+
+        menu.current.style.top = ev.pageY + 'px';
+        menu.current.style.left = leftPosition + 'px';
+        setIsMenu(true);
     }
 
     return (
@@ -76,7 +153,7 @@ export default function FilesManagers() {
                 {
                     files.length ?
                     files.map(f =>
-                        <div className="file" onClick={() => click(f)} key={f._id}>
+                        <div className="file" onClick={() => click(f)} onContextMenu={ev => rightClick(ev, f)} key={f._id}>
                             {
                                 f.isFolder ?
                                     <i className="fa fa-folder"></i> :
@@ -87,6 +164,11 @@ export default function FilesManagers() {
                     ) :
                     <p className="empty">ריק</p>
                 }
+            </div>
+
+            <div className="context-menu" ref={menu} style={{ display: isMenu ? 'block' : 'none' }}>
+                <a href="#" className="menu-item" onClick={rename}><i className='fa fa-edit'></i> שינוי שם</a>
+                <a href="#" className="menu-item" onClick={remove}><i className='fa fa-trash'></i> מחיקה</a>
             </div>
         </div>
     )

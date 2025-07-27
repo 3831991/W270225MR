@@ -18,10 +18,10 @@ const File = model("files", schema);
 
 const router = Router();
 
-// שם הקובץ הנוכחי
-const __filename = fileURLToPath(import.meta.url);
-// שם התיקייה הנוכחית
-const __dirname = path.dirname(__filename);
+// // שם הקובץ הנוכחי
+// const __filename = fileURLToPath(import.meta.url);
+// // שם התיקייה הנוכחית
+// const __dirname = path.dirname(__filename);
 
 router.get('/:folderId', async (req, res) => {
     const { folderId } = req.params;
@@ -46,6 +46,18 @@ router.post("/folder/:folderId", async (req, res) => {
         const newFolder = await folder.save();
         res.send(newFolder);
     });
+});
+
+router.patch('/:fileId/rename/:fileName', async (req, res) => {
+    const { fileId, fileName } = req.params;
+    await File.findByIdAndUpdate(fileId, { fileName });
+    res.end();
+});
+
+router.delete('/:fileId', async (req, res) => {
+    const { fileId } = req.params;
+    await File.findByIdAndDelete(fileId);
+    res.end();
 });
 
 export default router;
