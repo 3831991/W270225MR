@@ -4,19 +4,22 @@ import { useEffect } from 'react';
 import { useRef } from 'react';
 const bricksAmount = 50;
 const padding = 6;
-const step = 4;
+const step = 10;
+const brickWidth = 800 / 10 - 6; // 10 columns, minus gaps
+const brickHeight = 15;
 
 export default function Game() {
     const [bricks, setBricks] = useState([]);
     const [paddleX, setPaddleX] = useState(padding);
-    const [ballY, setBallY] = useState(110);
-    const [ballX, setBallX] = useState(200);
-    
+    const [ballY, setBallY] = useState(500);
+    const [ballX, setBallX] = useState(100);
+
     const horizontal = useRef('top');
     const vertical = useRef('left');
     const interval = useRef();
 
     const game = useRef();
+    const header = useRef();
     const ball = useRef();
     const paddle = useRef();
 
@@ -24,10 +27,22 @@ export default function Game() {
     const isLeftKeyDown = useRef();
 
     useEffect(() => {
+
+
         const arr = [];
 
         for (let i = 0; i < bricksAmount; i++) {
-            arr.push(i);
+            const row = Math.floor(i / 10);
+            const col = i % 10;
+
+            arr.push({
+                i,
+                completed: false,
+                x: col * (brickWidth + padding),
+                y: row * (brickHeight + padding),
+                width: brickWidth,
+                height: brickHeight,
+            });
         }
 
         setBricks(arr);
@@ -57,11 +72,11 @@ export default function Game() {
 
     const movePaddle = () => {
         if (isRightKeyDown.current) {
-            setPaddleX(paddleX => Math.max(padding, paddleX - 10));
+            setPaddleX(paddleX => Math.max(padding, paddleX - 20));
             setTimeout(movePaddle, 30);
         } else if (isLeftKeyDown.current) {
             const max = game.current.offsetWidth - paddle.current.offsetWidth - padding;
-            setPaddleX(paddleX => Math.min(max, paddleX + 10));
+            setPaddleX(paddleX => Math.min(max, paddleX + 20));
             setTimeout(movePaddle, 30);
         }
     }
@@ -97,7 +112,7 @@ export default function Game() {
 
             setBallX(prev => prev + step);
         }
-        
+
         if (horizontal.current === 'top') {
             if (ball.current.offsetTop <= padding) {
                 horizontal.current = 'bottom';
@@ -122,13 +137,36 @@ export default function Game() {
 
             setBallY(prev => prev + step);
         }
+
+        check();
+    }
+
+    const check = () => {
+        if (ball.current.offsetTop > header.current.offsetHeight + padding) {
+            return;
+        }
+
+        for (const b of header.current.children) {
+            if (b.style.visibility == "hidden") {
+                continue;
+            }
+
+            const start = b.offsetLeft - ball.current.offsetWidth - 7;
+            const end = b.offsetLeft + b.offsetWidth + ball.current.offsetWidth - 7;
+
+            if (ball.current.offsetTop <= b.offsetTop + b.offsetHeight && ball.current.offsetLeft >= start && ball.current.offsetLeft <= end) {
+                horizontal.current = 'bottom';
+                b.style.visibility = "hidden";
+                return;
+            }
+        }
     }
 
     return (
         <div className='Game' ref={game}>
-            <header>
-                {bricks.map(x => 
-                    <div className='Brick' key={x}></div>
+            <header ref={header}>
+                {bricks.map(x =>
+                    <div className='Brick' key={x.i}></div>
                 )}
             </header>
 
