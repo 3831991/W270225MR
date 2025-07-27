@@ -1,6 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import FilesRouter from './handlers/files.js';
+import mongoose from 'mongoose';
+
+// חיבור למסד הנתונים
+await mongoose.connect('mongodb://127.0.0.1:27017/full-stack-W270225MR');
+console.log('mongodb connection');
 
 const app = express();
 

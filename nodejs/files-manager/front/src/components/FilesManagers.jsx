@@ -1,30 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { icons } from "../config";
 
 export default function FilesManagers() {
-    const [files, setFiles] = useState([
-        { fileName: 'תיקיה ראשונה', isFolder: true },
-        { fileName: 'תיקיה שנייה', isFolder: true },
-        { fileName: 'תיקיה שלישית', isFolder: true },
-        { fileName: 'תיקיה רביעית', isFolder: true },
-        { fileName: 'תיקיה חמישית', isFolder: true },
-        { fileName: 'img4.jpg', type: 'jpg', isFolder: false },
-        { fileName: 'logo.png', type: 'png', isFolder: false },
-        { fileName: 'animation.gif', type: 'gif', isFolder: false },
-        { fileName: 'vector.svg', type: 'svg', isFolder: false },
-        { fileName: 'document.pdf', type: 'pdf', isFolder: false },
-        { fileName: 'notes.txt', type: 'plain', isFolder: false },
-        { fileName: 'archive.zip', type: 'zip', isFolder: false },
-    ]);
+    const [files, setFiles] = useState([]);
 
-    const createFolder = () => {
+    const getData = async (folderId = 'main') => {
+        const res = await fetch(`http://localhost:5000/files/${folderId}`);
+
+        if (res.ok) {
+            const data = await res.json();
+            setFiles(data);
+        }
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const createFolder = async () => {
         const folderName = prompt("בחר שם לתיקייה");
 
         if (!folderName) {
             return;
         }
 
-        setFiles([...files, { fileName: folderName, isFolder: true }]);
+        const folderId = 'main';
+
+        const formData = new FormData();
+        formData.append("folderName", folderName);
+
+        const res = await fetch(`http://localhost:5000/files/folder/${folderId}`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (res.ok) {
+            const folder = await res.json();
+            setFiles([...files, folder]);
+        }
     }
 
     return (
@@ -38,6 +51,7 @@ export default function FilesManagers() {
 
             <div className="files">
                 {
+                    files.length ?
                     files.map(f =>
                         <div className="file">
                             {
@@ -47,7 +61,8 @@ export default function FilesManagers() {
                             }
                             <p>{f.fileName}</p>
                         </div>
-                    )
+                    ) :
+                    <p className="empty">אין עדיין קבצים</p>
                 }
             </div>
         </div>
