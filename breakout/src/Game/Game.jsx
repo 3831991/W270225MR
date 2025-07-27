@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRef } from 'react';
 const bricksAmount = 50;
 const padding = 6;
-const step = 1;
+const step = 4;
 
 export default function Game() {
     const [bricks, setBricks] = useState([]);
@@ -20,6 +20,9 @@ export default function Game() {
     const ball = useRef();
     const paddle = useRef();
 
+    const isRightKeyDown = useRef();
+    const isLeftKeyDown = useRef();
+
     useEffect(() => {
         const arr = [];
 
@@ -31,21 +34,49 @@ export default function Game() {
     }, []);
 
     const handleKeyDown = ev => {
+        if (isRightKeyDown.current || isLeftKeyDown.current) {
+            return;
+        }
+
         if (ev.key === 'ArrowLeft') {
-            setPaddleX(paddleX => Math.max(padding, paddleX - 20));
+            isRightKeyDown.current = true;
+            movePaddle();
         } else if (ev.key === 'ArrowRight') {
+            isLeftKeyDown.current = true;
+            movePaddle();
+        }
+    }
+
+    const handleKeyUp = ev => {
+        if (ev.key === 'ArrowLeft') {
+            isRightKeyDown.current = false;
+        } else if (ev.key === 'ArrowRight') {
+            isLeftKeyDown.current = false;
+        }
+    }
+
+    const movePaddle = () => {
+        if (isRightKeyDown.current) {
+            setPaddleX(paddleX => Math.max(padding, paddleX - 10));
+            setTimeout(movePaddle, 30);
+        } else if (isLeftKeyDown.current) {
             const max = game.current.offsetWidth - paddle.current.offsetWidth - padding;
             setPaddleX(paddleX => Math.min(max, paddleX + 10));
+            setTimeout(movePaddle, 30);
         }
     }
 
     useEffect(() => {
         window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keyup", handleKeyUp);
 
         clearInterval(interval.current);
-        interval.current = setInterval(() => move('left'), 10);
+        interval.current = setInterval(() => move('left'), 50);
 
-        return () => window.removeEventListener("keydown", handleKeyDown)
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener("keyup", handleKeyUp);
+        }
     }, []);
 
     const move = () => {
@@ -75,13 +106,18 @@ export default function Game() {
 
             setBallY(prev => prev - step);
         } else if (horizontal.current === 'bottom') {
-            const max = game.current.offsetHeight - ball.current.offsetHeight - padding;
+            const max = paddle.current.offsetParent.offsetTop - ball.current.offsetHeight + 2;
 
             if (ball.current.offsetTop >= max) {
-                // clearInterval(interval.current);
+                const start = paddle.current.offsetLeft - ball.current.offsetWidth - 7;
+                const end = paddle.current.offsetLeft + paddle.current.offsetWidth + ball.current.offsetWidth - 7;
 
-                horizontal.current = 'top';
-                return;
+                if (ball.current.offsetLeft >= start && ball.current.offsetLeft <= end) {
+                    horizontal.current = 'top';
+                    return;
+                } else {
+                    clearInterval(interval.current);
+                }
             }
 
             setBallY(prev => prev + step);
