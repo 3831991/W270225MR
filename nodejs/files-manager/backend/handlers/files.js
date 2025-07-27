@@ -30,6 +30,7 @@ router.get('/:folderId', async (req, res) => {
     res.send(files);
 });
 
+// Create folder
 router.post("/folder/:folderId", async (req, res) => {
     const { folderId } = req.params;
 

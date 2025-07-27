@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { icons } from "../config";
 
 export default function FilesManagers() {
     const [files, setFiles] = useState([]);
+    const navigate = useNavigate();
 
     const getData = async (folderId = 'main') => {
         const res = await fetch(`http://localhost:5000/files/${folderId}`);
@@ -40,6 +42,14 @@ export default function FilesManagers() {
         }
     }
 
+    const click = file => {
+        if (file.isFolder) {
+            navigate(`/folder/${file._id}`);
+        } else {
+
+        }
+    }
+
     return (
         <div>
             <h1>ניהול קבצים</h1>
@@ -53,7 +63,7 @@ export default function FilesManagers() {
                 {
                     files.length ?
                     files.map(f =>
-                        <div className="file">
+                        <div className="file" onClick={() => click(f)} key={f._id}>
                             {
                                 f.isFolder ?
                                     <i className="fa fa-folder"></i> :
