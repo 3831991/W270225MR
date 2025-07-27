@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { icons } from "../config";
 
 export default function FilesManagers() {
     const [files, setFiles] = useState([]);
     const navigate = useNavigate();
+    const { folderId } = useParams();
 
-    const getData = async (folderId = 'main') => {
-        const res = await fetch(`http://localhost:5000/files/${folderId}`);
+    const getData = async () => {
+        const res = await fetch(`http://localhost:5000/files/${folderId || 'main'}`);
 
         if (res.ok) {
             const data = await res.json();
@@ -17,7 +18,7 @@ export default function FilesManagers() {
 
     useEffect(() => {
         getData();
-    }, []);
+    }, [folderId]);
 
     const createFolder = async () => {
         const folderName = prompt("בחר שם לתיקייה");
@@ -26,12 +27,10 @@ export default function FilesManagers() {
             return;
         }
 
-        const folderId = 'main';
-
         const formData = new FormData();
         formData.append("folderName", folderName);
 
-        const res = await fetch(`http://localhost:5000/files/folder/${folderId}`, {
+        const res = await fetch(`http://localhost:5000/files/folder/${folderId || 'main'}`, {
             method: 'POST',
             body: formData,
         });
@@ -50,13 +49,27 @@ export default function FilesManagers() {
         }
     }
 
+    const back = () => {
+        history.back();
+    }
+
+    const home = () => {
+        navigate('/');
+    }
+
     return (
         <div>
             <h1>ניהול קבצים</h1>
 
             <div className="actions">
-                <button className='button' onClick={createFolder}><i className='fa fa-plus'></i> תיקייה חדשה</button>
-                <button className='button'><i className='fa fa-upload'></i> העלאת קבצים</button>
+                <div>
+                    {folderId && <button className='button' onClick={back}><i className='fa fa-arrow-right'></i> אחורה</button>}
+                    {folderId && <button className='button' onClick={home}><i className='fa fa-home'></i> ראשי</button>}
+                </div>
+                <div>
+                    <button className='button' onClick={createFolder}><i className='fa fa-plus'></i> תיקייה חדשה</button>
+                    <button className='button'><i className='fa fa-upload'></i> העלאת קבצים</button>
+                </div>
             </div>
 
             <div className="files">
@@ -72,7 +85,7 @@ export default function FilesManagers() {
                             <p>{f.fileName}</p>
                         </div>
                     ) :
-                    <p className="empty">אין עדיין קבצים</p>
+                    <p className="empty">ריק</p>
                 }
             </div>
         </div>
