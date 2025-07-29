@@ -205,7 +205,7 @@ p.empty {
   bottom: 30px;
   transform: translateX(-50%);
   font-size: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   opacity: 0;
   transition: opacity 0.5s ease, bottom 0.5s ease;
 }
@@ -214,4 +214,38 @@ p.empty {
   visibility: visible;
   opacity: 1;
   bottom: 50px;
+}
+
+.preview {
+  position: fixed;
+  inset: 0;
+  background: #000000db;
+}
+
+.preview .close {
+  background: none;
+  color: white;
+  border: 0;
+  font-size: 3em;
+  cursor: pointer;
+  width: 70px;
+  height: 70px;
+  transition: 0.4s;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.preview .close:hover {
+  rotate: 360deg;
+  color: red;
+}
+
+.preview img {
+  width: 90%;
+  max-width: 800px;
+  display: block;
+  margin: auto;
+  margin-top: 100px;
+  border-radius: 12px;
 }

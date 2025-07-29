@@ -7,6 +7,7 @@ export default function FilesManagers() {
     const [files, setFiles] = useState([]);
     const [fileClicked, setFileClicked] = useState();
     const [isMenu, setIsMenu] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
     const menu = useRef();
     const fileInput = useRef();
     const navigate = useNavigate();
@@ -65,6 +66,8 @@ export default function FilesManagers() {
     const click = file => {
         if (file.isFolder) {
             navigate(`/folder/${file._id}`);
+        } else if (file.type.includes('image')) {
+            setPreviewImage(`http://localhost:5000/files/file/${file._id}/${file.fileName}`);
         } else {
             window.open(`http://localhost:5000/files/file/${file._id}/${file.fileName}`, "_blank");
         }
@@ -196,6 +199,14 @@ export default function FilesManagers() {
             </div>
 
             <input type="file" onChange={upload} ref={fileInput} multiple style={{ display: 'none' }} />
+
+            {
+                previewImage &&
+                <div className="preview">
+                    <button className="close" onClick={() => setPreviewImage('')}>x</button>
+                    <img src={previewImage} />
+                </div>
+            }
         </div>
     )
 }
