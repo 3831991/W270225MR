@@ -18,16 +18,34 @@ const File = model("files", schema);
 
 const router = Router();
 
-// // שם הקובץ הנוכחי
-// const __filename = fileURLToPath(import.meta.url);
-// // שם התיקייה הנוכחית
-// const __dirname = path.dirname(__filename);
+// שם הקובץ הנוכחי
+const __filename = fileURLToPath(import.meta.url);
+// שם התיקייה הנוכחית
+const __dirname = path.dirname(__filename);
 
+// קבלת תוכן של תיקייה
 router.get('/:folderId', async (req, res) => {
     const { folderId } = req.params;
 
     const files = await File.find({ parent: folderId == 'main' ? null : folderId });
     res.send(files);
+});
+
+// הצגת קובץ
+router.get('/file/:fileId', async (req, res) => {
+    const { fileId } = req.params;
+    const file = await File.findById(fileId);
+
+    // ניתוב אבסולוטי לקובץ
+    let url = `${__dirname}/../files/${file._id}`;
+    // ניקוי הנתיב מניתובים
+    url = path.resolve(url);
+
+    res.setHeader("Content-Type", file.type);
+    res.setHeader("Content-Disposition", `inline; filename="${file.fileName}"`);
+
+    // שליחת הקובץ ללקוח
+    res.sendFile(url);
 });
 
 // Upload filed

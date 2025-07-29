@@ -66,7 +66,7 @@ export default function FilesManagers() {
         if (file.isFolder) {
             navigate(`/folder/${file._id}`);
         } else {
-            
+            window.open(`http://localhost:5000/files/file/${file._id}`, "_blank");
         }
     }
 
