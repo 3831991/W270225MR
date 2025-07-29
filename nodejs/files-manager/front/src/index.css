@@ -54,6 +54,7 @@
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .file:hover {
@@ -265,4 +266,13 @@ p.empty {
   margin: auto;
   margin-top: 100px;
   border-radius: 12px;
+}
+
+.rightClick {
+  scale: 0.8;
+}
+
+.selected {
+  border: 1px solid blue;
+  background-color: #0000ff17;
 }

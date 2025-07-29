@@ -6,6 +6,8 @@ import { MyContext } from "../App";
 export default function FilesManagers() {
     const [files, setFiles] = useState([]);
     const [fileClicked, setFileClicked] = useState();
+    const [selecteds, setSelecteds] = useState({});
+    const [selectedAmount, setSelectedAmount] = useState(0);
     const [isMenu, setIsMenu] = useState(false);
     const [isDrag, setIsDrag] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
@@ -33,10 +35,37 @@ export default function FilesManagers() {
     }, [folderId]);
     
     useEffect(() => {
-        window.addEventListener("click", () => setIsMenu(false));
-
-        return () => window.removeEventListener("click", () => {});
+        window.addEventListener("click", closeMenu);
+        window.addEventListener("keydown", keydown);
+        
+        return () => {
+            window.removeEventListener("click", closeMenu);
+            window.removeEventListener("keydown", keydown);
+        }
     }, []);
+
+    const closeMenu = () => {
+        setIsMenu(false)
+    }
+
+    const keydown = ev => {
+        if (ev.key == 'a' && ev.ctrlKey) {
+            ev.preventDefault();
+
+            setFiles(prev => {
+                const obj = {};
+                
+                for (const i in prev) {
+                    obj[i] = true;
+                }
+
+                setSelecteds(obj);
+                setSelectedAmount(prev.length);
+
+                return [...prev];
+            });
+        }
+    }
 
     const createFolder = async () => {
         const folderName = prompt("בחר שם לתיקייה");
@@ -64,7 +93,9 @@ export default function FilesManagers() {
         loader(false);
     }
 
-    const click = file => {
+    const dblclick = file => {
+        cancelSelected();
+
         if (file.isFolder) {
             navigate(`/folder/${file._id}`);
         } else if (file.type.includes('image')) {
@@ -75,10 +106,12 @@ export default function FilesManagers() {
     }
 
     const back = () => {
+        cancelSelected();
         history.back();
     }
 
     const home = () => {
+        cancelSelected();
         navigate('/');
     }
 
@@ -105,24 +138,48 @@ export default function FilesManagers() {
     }
 
     const remove = async () => {
-        if (!confirm(`האם אתה בטוח כי ברצונך למחוק את ה${fileClicked.isFolder ? 'תיקייה' : 'קובץ'}?`)) {
-            return;
+        if (selectedAmount <= 1) {
+            if (!confirm(`האם אתה בטוח כי ברצונך למחוק את ה${fileClicked.isFolder ? 'תיקייה' : 'קובץ'}?`)) {
+                return;
+            }
+        } else {
+            if (!confirm(`האם למחוק ${selectedAmount} פריטים?`)) {
+                return;
+            }
         }
 
         loader(true);
 
-        const res = await fetch(`http://localhost:5000/files/${fileClicked._id}`, {
-            method: 'DELETE',
-        });
+        if (selectedAmount <= 1) {
+            const res = await fetch(`http://localhost:5000/files/${fileClicked._id}`, {
+                method: 'DELETE',
+            });
 
-        if (res.ok) {
-            setFiles(prev => prev.filter(x => x._id != fileClicked._id));
+            if (res.ok) {
+                setFiles(prev => prev.filter(x => x._id != fileClicked._id));
 
-            if (fileClicked.isFolder) {
-                snackbar("התיקייה נמחקה בהצלחה");
-            } else {
-                snackbar("הקובץ נמחק בהצלחה");
+                if (fileClicked.isFolder) {
+                    snackbar("התיקייה נמחקה בהצלחה");
+                } else {
+                    snackbar("הקובץ נמחק בהצלחה");
+                }
             }
+        } else {
+            const multiple = [];
+            const ids = [];
+
+            for (const i in selecteds) {
+                const fileId = files[i]._id;
+                ids.push(fileId);
+
+                multiple.push(fetch(`http://localhost:5000/files/${fileId}`, {
+                    method: 'DELETE',
+                }));
+            }
+
+            await Promise.all(multiple);
+
+            setFiles(prev => prev.filter(x => !ids.includes(x._id)));
         }
 
         loader(false);
@@ -187,6 +244,43 @@ export default function FilesManagers() {
         }
     }
 
+    const click = (ev, i) => {
+        let obj = {};
+
+        if (ev.shiftKey) {
+            const first = Object.keys(selecteds).shift();
+
+            if (first === undefined) {
+                obj = {
+                    [i]: true,
+                };
+            } else {
+                const start = Math.min(i, +first);
+                const end = Math.max(i, +first);
+
+                for (let x = start; x <= end; x++) {
+                    obj[x] = true;
+                }
+            }
+        } else {
+            if (selecteds[i]) {
+                obj = {};
+            } else {
+                obj = {
+                    [i]: true,
+                };
+            }
+        }
+
+        setSelecteds(obj);
+        setSelectedAmount(Object.keys(obj).length);
+    }
+
+    const cancelSelected = () => {
+        setSelecteds({});
+        setSelectedAmount(0);
+    }
+
     return (
         <div>
             <h1>ניהול קבצים</h1>
@@ -205,8 +299,19 @@ export default function FilesManagers() {
             <div className={"files" + (isDrag ? ' drag' : '')} onDragOver={dragStart} onDragLeave={() => setIsDrag(false)} onDrop={drop}>
                 {
                     files.length ?
-                    files.map(f =>
-                        <div className="file" onClick={() => click(f)} onContextMenu={ev => rightClick(ev, f)} key={f._id}>
+                    files.map((f, i) =>
+                        <div 
+                            key={f._id}
+                            className={
+                                "file" +
+                                ((fileClicked?._id == f._id && isMenu) ? ' rightClick' : '') +
+                                (selecteds[i] ? ' selected' : '')
+                            } 
+                            onDoubleClick={() => dblclick(f)}
+                            onContextMenu={ev => rightClick(ev, f)}
+                            onMouseDown={ev => ev.preventDefault()}
+                            onClick={ev => click(ev, i)}
+                        >
                             {
                                 f.isFolder ?
                                     <i className="fa fa-folder"></i> :
@@ -220,7 +325,7 @@ export default function FilesManagers() {
             </div>
 
             <div className="context-menu" ref={menu} style={{ display: isMenu ? 'block' : 'none' }}>
-                <a href="#" className="menu-item" onClick={rename}><i className='fa fa-edit'></i> שינוי שם</a>
+                {selectedAmount <= 1 && <a href="#" className="menu-item" onClick={rename}><i className='fa fa-edit'></i> שינוי שם</a>}
                 <a href="#" className="menu-item" onClick={remove}><i className='fa fa-trash'></i> מחיקה</a>
             </div>
 
