@@ -36,7 +36,7 @@ export const icons = {
     'video/x-msvideo': 'file-video',
 
     // אודיו
-    'audio/mpeg': 'file-audio',
-    'audio/wav': 'file-audio',
-    'audio/ogg': 'file-audio',
+    'audio/mpeg': 'file-audio-o',
+    'audio/wav': 'file-audio-o',
+    'audio/ogg': 'file-audio-o',
 };

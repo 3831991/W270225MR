@@ -7,6 +7,7 @@ export default function FilesManagers() {
     const [files, setFiles] = useState([]);
     const [fileClicked, setFileClicked] = useState();
     const [isMenu, setIsMenu] = useState(false);
+    const [isDrag, setIsDrag] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const menu = useRef();
     const fileInput = useRef();
@@ -161,6 +162,31 @@ export default function FilesManagers() {
         }
     }
 
+    const dragStart = ev => {
+        ev.preventDefault();
+        setIsDrag(true);
+    }
+
+    const drop = async ev => {
+        ev.preventDefault();
+        setIsDrag(false);
+
+        const formData = new FormData();
+
+        for (const f of ev.dataTransfer.files) {
+            formData.append("files", f);
+        }
+
+        const res = await fetch(`http://localhost:5000/files/${folderId || 'main'}/upload`, {
+            method: "POST",
+            body: formData,
+        });
+
+        if (res.ok) {
+            getData();
+        }
+    }
+
     return (
         <div>
             <h1>ניהול קבצים</h1>
@@ -176,7 +202,7 @@ export default function FilesManagers() {
                 </div>
             </div>
 
-            <div className="files">
+            <div className={"files" + (isDrag ? ' drag' : '')} onDragOver={dragStart} onDragLeave={() => setIsDrag(false)} onDrop={drop}>
                 {
                     files.length ?
                     files.map(f =>

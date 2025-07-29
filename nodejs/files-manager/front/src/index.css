@@ -23,6 +23,24 @@
   box-sizing: border-box;
 }
 
+.files.drag {
+  border: 5px dashed gray;
+  position: relative;
+}
+
+.files.drag::after {
+  content: 'שחרר כאן';
+  position: absolute;
+  inset: 0;
+  color: gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 4em;
+  background: #ffffff8f;
+  font-weight: bold;
+}
+
 .file {
   width: 120px;
   height: 120px;
@@ -116,7 +134,6 @@ p.empty {
   display: flex;
   gap: 8px;
 }
-
 
 .context-menu {
   display: none;

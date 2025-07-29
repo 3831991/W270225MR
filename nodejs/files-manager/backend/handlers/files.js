@@ -111,8 +111,15 @@ router.patch('/:fileId/rename/:fileName', async (req, res) => {
 
 router.delete('/:fileId', async (req, res) => {
     const { fileId } = req.params;
-    await File.findByIdAndDelete(fileId);
-    res.end();
+    const file = await File.findByIdAndDelete(fileId);
+
+    if (!file.isFolder) {
+        fs.unlink(`./files/${fileId}`, err => {
+            res.end();
+        });
+    } else {
+        res.end();
+    }
 });
 
 export default router;
