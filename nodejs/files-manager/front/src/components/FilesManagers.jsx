@@ -66,7 +66,7 @@ export default function FilesManagers() {
         if (file.isFolder) {
             navigate(`/folder/${file._id}`);
         } else {
-            window.open(`http://localhost:5000/files/file/${file._id}`, "_blank");
+            window.open(`http://localhost:5000/files/file/${file._id}/${file.fileName}`, "_blank");
         }
     }
 
@@ -79,7 +79,7 @@ export default function FilesManagers() {
     }
 
     const rename = async () => {
-        const folderName = prompt("בחר שם לתיקייה", fileClicked.fileName);
+        const folderName = prompt(`בחר שם ל${fileClicked.isFolder ? 'תיקייה' : 'קובץ'}`, fileClicked.fileName);
 
         if (!folderName) {
             return;
@@ -94,14 +94,14 @@ export default function FilesManagers() {
         if (res.ok) {
             fileClicked.fileName = folderName;
             setFiles([...files]);
-            snackbar("שם התיקייה שונה בהצלחה");
+            snackbar(`שם ה${fileClicked.isFolder ? 'תיקייה' : 'קובץ'} השתנה בהצלחה`);
         }
 
         loader(false);
     }
 
     const remove = async () => {
-        if (!confirm("האם אתה בטוח כי ברצונך למחוק את הקובץ?")) {
+        if (!confirm(`האם אתה בטוח כי ברצונך למחוק את ה${fileClicked.isFolder ? 'תיקייה' : 'קובץ'}?`)) {
             return;
         }
 
@@ -113,7 +113,12 @@ export default function FilesManagers() {
 
         if (res.ok) {
             setFiles(prev => prev.filter(x => x._id != fileClicked._id));
-            snackbar("התיקייה נמחקה בהצלחה");
+
+            if (fileClicked.isFolder) {
+                snackbar("התיקייה נמחקה בהצלחה");
+            } else {
+                snackbar("הקובץ נמחק בהצלחה");
+            }
         }
 
         loader(false);

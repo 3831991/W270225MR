@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { formidable } from 'formidable';
 import { model, Schema } from 'mongoose';
+import { mimeToExt } from '../config.js';
 
 const schema = new Schema({
     createdTime: { type: Date, default: Date.now },
@@ -32,7 +33,7 @@ router.get('/:folderId', async (req, res) => {
 });
 
 // הצגת קובץ
-router.get('/file/:fileId', async (req, res) => {
+router.get('/file/:fileId/:fileName', async (req, res) => {
     const { fileId } = req.params;
     const file = await File.findById(fileId);
 
@@ -42,7 +43,7 @@ router.get('/file/:fileId', async (req, res) => {
     url = path.resolve(url);
 
     res.setHeader("Content-Type", file.type);
-    res.setHeader("Content-Disposition", `inline; filename="${file.fileName}"`);
+    res.setHeader("Content-Disposition", `inline; filename="${encodeURIComponent(file.fileName + '.' + mimeToExt[file.type])}"`);
 
     // שליחת הקובץ ללקוח
     res.sendFile(url);
@@ -60,8 +61,11 @@ router.post("/:folderId/upload", async (req, res) => {
 
     form.parse(req, async (err, fields, fileList) => {
         for (const f of fileList.files) {
+            const name = f.originalFilename.split('.');
+            name.pop();
+
             const file = new File({
-                fileName: f.originalFilename,
+                fileName: name.join('.'),
                 isFolder: false,
                 parent: folderId == 'main' ? null : folderId,
                 size: f.size,
