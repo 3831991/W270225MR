@@ -1,24 +1,42 @@
 export const icons = {
-    'doc': 'file-word-o',
-    'docx': 'file-word-o',
-    'pdf': 'file-pdf-o',
-    'xls': 'file-excel',
-    'xlsx': 'file-excel',
-    'ppt': 'file-powerpoint',
-    'pptx': 'file-powerpoint',
-    'txt': 'file-alt',
-    'html': 'file-code',
-    'gif': 'file-photo-o',
-    'png': 'file-photo-o',
-    'jpg': 'file-photo-o',
-    'jpeg': 'file-photo-o',
-    'css': 'file-code',
-    'js': 'file-code',
-    'ts': 'file-code',
-    'cs': 'file-code',
-    'php': 'file-code',
-    'json': 'file-code',
-    'sql': 'file-code',
-    'url': 'paperclip',
-    'zip': 'file-zip-o',
+    // תמונות
+    'image/jpeg': 'file-photo-o',
+    'image/png': 'file-photo-o',
+    'image/gif': 'file-photo-o',
+    'image/webp': 'file-photo-o',
+    'image/svg+xml': 'file-photo-o',
+
+    // מסמכים
+    'application/pdf': 'file-pdf-o',
+    'application/msword': 'file-word-o',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'file-word-o',
+    'application/vnd.ms-excel': 'file-excel-o',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'file-excel-o',
+    'application/vnd.ms-powerpoint': 'file-powerpoint-o',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'file-powerpoint-o',
+
+    // קבצי טקסט
+    'text/plain': 'file-alt',
+    'text/csv': 'file-csv',
+    'application/json': 'file-code',
+
+    // קוד
+    'text/html': 'file-code',
+    'text/css': 'file-code',
+    'application/javascript': 'file-code',
+
+    // ארכיונים
+    'application/zip': 'file-archive',
+    'application/x-rar-compressed': 'file-archive',
+    'application/x-7z-compressed': 'file-archive',
+
+    // וידאו
+    'video/mp4': 'file-video',
+    'video/webm': 'file-video',
+    'video/x-msvideo': 'file-video',
+
+    // אודיו
+    'audio/mpeg': 'file-audio',
+    'audio/wav': 'file-audio',
+    'audio/ogg': 'file-audio',
 };

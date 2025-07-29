@@ -30,6 +30,39 @@ router.get('/:folderId', async (req, res) => {
     res.send(files);
 });
 
+// Upload filed
+router.post("/:folderId/upload", async (req, res) => {
+    const { folderId } = req.params;
+    const form = formidable();
+
+    // אם אין את התיקייה - צור אותה
+    if (!fs.existsSync('./files')) {
+        fs.mkdirSync('./files', { recursive: true });
+    }
+
+    form.parse(req, async (err, fields, fileList) => {
+        for (const f of fileList.files) {
+            const file = new File({
+                fileName: f.originalFilename,
+                isFolder: false,
+                parent: folderId == 'main' ? null : folderId,
+                size: f.size,
+                type: f.mimetype,
+            });
+
+            const fileSaved = await file.save();
+
+            fs.copyFile(f.filepath, `./files/${fileSaved._id}`, err => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        res.end();
+    });
+});
+
 // Create folder
 router.post("/folder/:folderId", async (req, res) => {
     const { folderId } = req.params;

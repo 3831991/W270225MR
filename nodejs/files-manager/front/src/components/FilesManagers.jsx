@@ -8,6 +8,7 @@ export default function FilesManagers() {
     const [fileClicked, setFileClicked] = useState();
     const [isMenu, setIsMenu] = useState(false);
     const menu = useRef();
+    const fileInput = useRef();
     const navigate = useNavigate();
     const { folderId } = useParams();
     const { snackbar, loader } = useContext(MyContext);
@@ -65,7 +66,7 @@ export default function FilesManagers() {
         if (file.isFolder) {
             navigate(`/folder/${file._id}`);
         } else {
-
+            
         }
     }
 
@@ -134,6 +135,24 @@ export default function FilesManagers() {
         setIsMenu(true);
     }
 
+    const upload = async ev => {
+        const formData = new FormData();
+
+        for (const f of ev.target.files) {
+            formData.append("files", f);
+        }
+
+        const res = await fetch(`http://localhost:5000/files/${folderId || 'main'}/upload`, {
+            method: "POST",
+            body: formData,
+        });
+
+        if (res.ok) {
+            ev.target.value = '';
+            getData();
+        }
+    }
+
     return (
         <div>
             <h1>ניהול קבצים</h1>
@@ -145,7 +164,7 @@ export default function FilesManagers() {
                 </div>
                 <div>
                     <button className='button' onClick={createFolder}><i className='fa fa-plus'></i> תיקייה חדשה</button>
-                    <button className='button'><i className='fa fa-upload'></i> העלאת קבצים</button>
+                    <button className='button' onClick={() => fileInput.current.click()}><i className='fa fa-upload'></i> העלאת קבצים</button>
                 </div>
             </div>
 
@@ -170,6 +189,8 @@ export default function FilesManagers() {
                 <a href="#" className="menu-item" onClick={rename}><i className='fa fa-edit'></i> שינוי שם</a>
                 <a href="#" className="menu-item" onClick={remove}><i className='fa fa-trash'></i> מחיקה</a>
             </div>
+
+            <input type="file" onChange={upload} ref={fileInput} multiple style={{ display: 'none' }} />
         </div>
     )
 }
