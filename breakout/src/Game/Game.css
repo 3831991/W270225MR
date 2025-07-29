@@ -1,6 +1,6 @@
 .Game {
     width: 800px;
-    height: 600px;
+    height: 500px;
     background-color: #434343;
     margin: auto;
     display: flex;
@@ -42,10 +42,50 @@ footer {
     background-color: #d47800;
     border-radius: 50%;
     position: absolute;
-    /* transition: 0.1s; */
 }
 
 .Game footer {
     position: relative;
     height: 18px;
+}
+
+.actions {
+    padding: 30px;
+    text-align: center;
+}
+
+.button {
+    background: linear-gradient(145deg, #6e7bff, #4c5cf2);
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    transform: scale(1);
+    margin: 16px;
+    margin-top: 0;
+}
+
+.button i {
+    font-size: 20px;
+    transition: transform 0.3s ease;
+}
+
+.button:hover {
+    background: linear-gradient(145deg, #4c5cf2, #6e7bff);
+    box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+}
+
+.button:active {
+    background: #3e48f2;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+    transform: scale(0.98);
 }

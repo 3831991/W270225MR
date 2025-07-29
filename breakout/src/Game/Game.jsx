@@ -11,7 +11,7 @@ const brickHeight = 15;
 export default function Game() {
     const [bricks, setBricks] = useState([]);
     const [paddleX, setPaddleX] = useState(padding);
-    const [ballY, setBallY] = useState(500);
+    const [ballY, setBallY] = useState(400);
     const [ballX, setBallX] = useState(100);
 
     const horizontal = useRef('top');
@@ -23,13 +23,12 @@ export default function Game() {
     const ball = useRef();
     const paddle = useRef();
     const angle = useRef(0);
+    const isGameOver = useRef(false);
 
     const isRightKeyDown = useRef();
     const isLeftKeyDown = useRef();
 
     useEffect(() => {
-
-
         const arr = [];
 
         for (let i = 0; i < bricksAmount; i++) {
@@ -72,6 +71,10 @@ export default function Game() {
     }
 
     const movePaddle = () => {
+        if (isGameOver.current) {
+            return;
+        }
+
         if (isRightKeyDown.current) {
             setPaddleX(paddleX => Math.max(padding, paddleX - 20));
             setTimeout(movePaddle, 30);
@@ -105,7 +108,11 @@ export default function Game() {
         return minOutput + ratio * (maxOutput - minOutput);
     }
 
-    const move = () => {        
+    const move = () => {
+        if (isGameOver.current) {
+            return;
+        }
+
         if (vertical.current === 'left') {
             if (ball.current.offsetLeft <= padding) {
                 vertical.current = 'right';
@@ -157,7 +164,7 @@ export default function Game() {
 
                     return;
                 } else {
-                    clearInterval(interval.current);
+                    gameOver();
                 }
             }
 
@@ -181,26 +188,52 @@ export default function Game() {
             const end = b.offsetLeft + b.offsetWidth + ball.current.offsetWidth - 7;
 
             if (ball.current.offsetTop <= b.offsetTop + b.offsetHeight && ball.current.offsetLeft >= start && ball.current.offsetLeft <= end) {
-                horizontal.current = 'bottom';
+                if (horizontal.current == 'top') {
+                    horizontal.current = 'bottom';
+                } else {
+                    horizontal.current = 'bottom';
+                }
+
                 b.style.visibility = "hidden";
                 return;
             }
         }
     }
 
+    const gameOver = () => {
+        isGameOver.current = true;
+        clearInterval(interval.current);
+    }
+
+    const newGame = () => {
+        for (const b of header.current.children) {
+            b.style.visibility = "visible";
+        }
+
+        horizontal.current = 'top';
+        isGameOver.current = false;
+        interval.current = setInterval(() => move('left'), 50);
+    }
+
     return (
-        <div className='Game' ref={game}>
-            <header ref={header}>
-                {bricks.map(x =>
-                    <div className='Brick' key={x.i}></div>
-                )}
-            </header>
+        <>
+            <div className='Game' ref={game}>
+                <header ref={header}>
+                    {bricks.map(x =>
+                        <div className='Brick' key={x.i}></div>
+                    )}
+                </header>
 
-            <div className='Ball' ref={ball} style={{ left: ballX + 'px', top: ballY + 'px' }}></div>
+                <div className='Ball' ref={ball} style={{ left: ballX + 'px', top: ballY + 'px' }}></div>
 
-            <footer>
-                <div className='Paddle' ref={paddle} style={{ left: paddleX + 'px' }}></div>
-            </footer>
-        </div>
+                <footer>
+                    <div className='Paddle' ref={paddle} style={{ left: paddleX + 'px' }}></div>
+                </footer>
+            </div>
+
+            <div className='actions'>
+                {isGameOver.current && <button className='button' onClick={newGame}><i className='fa fa-undo'></i> משחק חדש</button>}
+            </div>
+        </>
     )
 }
