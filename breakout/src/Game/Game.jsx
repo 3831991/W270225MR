@@ -22,6 +22,7 @@ export default function Game() {
     const header = useRef();
     const ball = useRef();
     const paddle = useRef();
+    const angle = useRef(0);
 
     const isRightKeyDown = useRef();
     const isLeftKeyDown = useRef();
@@ -94,14 +95,24 @@ export default function Game() {
         }
     }, []);
 
-    const move = () => {
+    const mapNumber = x => {
+        const minInput = 0;
+        const maxInput = 70;
+        const minOutput = -8;
+        const maxOutput = 18;
+
+        const ratio = (x - minInput) / (maxInput - minInput);
+        return minOutput + ratio * (maxOutput - minOutput);
+    }
+
+    const move = () => {        
         if (vertical.current === 'left') {
             if (ball.current.offsetLeft <= padding) {
                 vertical.current = 'right';
                 return;
             }
 
-            setBallX(prev => prev - step);
+            setBallX(prev => prev - step - angle.current);
         } else if (vertical.current === 'right') {
             const max = game.current.offsetWidth - ball.current.offsetWidth - padding;
 
@@ -110,7 +121,7 @@ export default function Game() {
                 return;
             }
 
-            setBallX(prev => prev + step);
+            setBallX(prev => prev + step + angle.current);
         }
 
         if (horizontal.current === 'top') {
@@ -126,9 +137,24 @@ export default function Game() {
             if (ball.current.offsetTop >= max) {
                 const start = paddle.current.offsetLeft - ball.current.offsetWidth - 7;
                 const end = paddle.current.offsetLeft + paddle.current.offsetWidth + ball.current.offsetWidth - 7;
+                const half = (end - start) / 2;
 
                 if (ball.current.offsetLeft >= start && ball.current.offsetLeft <= end) {
                     horizontal.current = 'top';
+
+                    // בחצי הימני של המשוט
+                    if (ball.current.offsetLeft >= start + half) {
+                        const position = ball.current.offsetLeft - start - half;
+                        angle.current = mapNumber(position);
+                        vertical.current = 'right';
+                    }
+                    // בחצי השמאלי של המשוט
+                    else {
+                        const position = ball.current.offsetLeft - start;
+                        angle.current = mapNumber(position);
+                        vertical.current = 'left';
+                    }
+
                     return;
                 } else {
                     clearInterval(interval.current);
