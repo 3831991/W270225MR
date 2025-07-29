@@ -3,6 +3,8 @@ import { model, Schema } from "mongoose";
 import { Router } from 'express';
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 const Address = new Schema({
     city: String,
@@ -32,6 +34,11 @@ const EmployeeSchema = new Schema({
 export const Employee = model("employees", EmployeeSchema);
 
 const router = Router();
+
+// שם הקובץ הנוכחי
+const __filename = fileURLToPath(import.meta.url);
+// שם התיקייה הנוכחית
+const __dirname = path.dirname(__filename);
 
 // Get all employees
 router.get('/', guard, async (req, res) => {
@@ -63,7 +70,17 @@ router.get('/images/:imageId', guard, async (req, res) => {
     const user = jwt.decode(req.headers.authorization || req.query.authorization);
 
     const employee = await Employee.findOne({ 'image._id': req.params.imageId, userCreatedId: user.userId });
-    res.download(`./images/${req.params.imageId}`, employee.image.name);
+
+    // ניתוב אבסולוטי לקובץ
+    let url = `${__dirname}/../images/${req.params.imageId}`;
+    // ניקוי הנתיב מניתובים
+    url = path.resolve(url);
+
+    res.setHeader("Content-Type", employee.image.type);
+    res.setHeader("Content-Disposition", `inline; filename="${employee.image.name}"`);
+
+    // שליחת הקובץ ללקוח
+    res.sendFile(url);
 });
 
 // Add employee
