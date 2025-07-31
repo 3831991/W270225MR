@@ -100,7 +100,7 @@ export default function Game() {
 
     const mapNumber = x => {
         const minInput = 0;
-        const maxInput = 70;
+        const maxInput = (paddle.current.offsetWidth + ball.current.offsetWidth - 7) / 2;
         const minOutput = -8;
         const maxOutput = 18;
 
