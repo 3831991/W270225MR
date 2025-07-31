@@ -5,6 +5,7 @@ import EmployeesRouter from './handlers/employee.js';
 import AuthRouter from './handlers/auth.js';
 
 // חיבור למסד הנתונים
+// await mongoose.connect('mongodb+srv://elyashivner:HvhjUzsmA0cDLFVu@w270225mr.d5hkyle.mongodb.net/?retryWrites=true&w=majority&appName=w270225mr');
 await mongoose.connect('mongodb://127.0.0.1:27017/full-stack-W270225MR');
 console.log('mongodb connection');
 
