@@ -11,6 +11,8 @@ app.use(cors({
     allowedHeaders: 'Content-Type, Accept, Authorization',
 }));
 
+app.use('/', express.static('public'));
+
 app.listen(3333, () => {
     console.log("listening on port 3333");
 });
