@@ -5,6 +5,7 @@ import { MyContext } from "../App";
 
 export default function Articles() {
     const [articles, setArticles] = useState([]);
+    const [search, setSearch] = useState('');
     const navigate = useNavigate();
     const { snackbar, setIsLoader } = useContext(MyContext);
 
@@ -56,6 +57,14 @@ export default function Articles() {
     const goToEdit = async id => {
         navigate(`/article/${id}`);
     }
+    
+    const markMy = (text, search) => {
+        if (!search) {
+            return text;
+        }
+
+        return text.replaceAll(search, `<mark>${search}</mark>`);
+    }
 
     return (
         <div className="Articles">
@@ -69,6 +78,10 @@ export default function Articles() {
                 <Link to="/recycle-bin">
                     <button className="add"><i className="fa fa-recycle"></i> סל מחזור</button>
                 </Link>
+            </div>
+
+            <div>
+                <input type="search" placeholder="חיפוש חופשי" onInput={ev => setSearch(ev.target.value)} />
             </div>
 
             {
@@ -86,10 +99,10 @@ export default function Articles() {
                     </thead>
                     <tbody>
                         {
-                            articles.map((art, i) =>
+                            articles.filter(art => art.headline.includes(search)).map((art, i) =>
                                 <tr key={art._id} onDoubleClick={() => goToEdit(art._id)}>
                                     <td>{i + 1}</td>
-                                    <td>{art.headline}</td>
+                                    <td dangerouslySetInnerHTML={{ __html: markMy(art.headline, search) }}></td>
                                     <td>{moment(art.addedTime).format("DD/MM/YY")}</td>
                                     <td>{moment(art.publishDate).format("DD/MM/YY")}</td>
                                     <td>{art.views}</td>
