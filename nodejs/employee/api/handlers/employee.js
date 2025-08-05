@@ -5,6 +5,7 @@ import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import validate from './employees.joi.js';
 
 const Address = new Schema({
     city: String,
@@ -87,7 +88,7 @@ router.get('/images/:imageId', guard, async (req, res) => {
 });
 
 // Add employee
-router.post('/', guard, async (req, res) => {
+router.post('/', guard, validate, async (req, res) => {
     const item = req.body;
     const user = jwt.decode(req.headers.authorization);
 
@@ -135,7 +136,7 @@ router.post('/', guard, async (req, res) => {
 });
 
 // Edit employee
-router.put('/:id', guard, async (req, res) => {
+router.put('/:id', guard, validate, async (req, res) => {
     const item = req.body;
 
     try {
