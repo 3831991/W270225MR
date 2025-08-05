@@ -28,7 +28,10 @@ const EmployeeSchema = new Schema({
     address: Address,
     image: Image,
     gender: String,
-    userCreatedId: Schema.Types.ObjectId,
+    userCreatedId: {
+        type: Schema.Types.ObjectId,
+        index: true,
+    },
 });
 
 export const Employee = model("employees", EmployeeSchema);

@@ -8,7 +8,7 @@ import guard from '../guard.js';
 const schema = new mongoose.Schema({
     firstName: String,
     lastName: String,
-    email: String,
+    email: { type: String, unique: true },
     phone: String,
     password: String,
 });
