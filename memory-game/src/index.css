@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;600;700;900&display=swap');
+
+* {
+  font-family: 'Rubik', sans-serif;
+}
+
+body {
+  direction: rtl;
+  background-color: #ccdeff;
+}
+
+h1 {
+  text-align: center;
+}
+
+.board {
+  max-width: 900px;
+  margin: auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 3px #0000007e;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-evenly;
+  padding: 16px;
+}
+
+.card {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  background-color: #b4cfff;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.card:hover {
+  scale: 1.1;
+}
+
+.card * {
+  display: none;
+}
+
+.card.show {
+  background-color: white;
+  box-shadow: 0 0 5px #60606094;
+  transform: matrix3d(1, 0, 4, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1);
+}
+
+.card.complete {
+  visibility: hidden;
+}
+
+.card.show * {
+  display: block;
+}
+
+.card i {
+  font-size: 2.5em;
+  font-style: normal;
+}
+
+.card p {
+  margin: 5px;
+}
+
+.animals {
+  text-align: center;
+  font-size: 6em;
+}
