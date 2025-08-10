@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const animals = [
     { id: 1, name: 'אריה', icon: '🦁' },
@@ -25,6 +25,10 @@ const animals = [
 
 export default function Game() {
     const [cards, setCards] = useState([]);
+    const [hoverId, setHoverId] = useState([]);
+    const [isOnePlayer, setIsOnePlayer] = useState(true);
+    const [player1, setPlayer1] = useState([]);
+    const [player2, setPlayer2] = useState([]);
 
     useEffect(() => {
         const arr = [];
@@ -53,6 +57,12 @@ export default function Game() {
                 setTimeout(() => {
                     prev.complete = true;
                     card.complete = true;
+                    
+                    if (isOnePlayer) {
+                        setPlayer1(prev => [...prev, card]);
+                    } else {
+                        setPlayer2(prev => [...prev, card]);
+                    }
 
                     prev.show = false;
                     card.show = false;
@@ -64,6 +74,7 @@ export default function Game() {
                     prev.show = false;
                     card.show = false;
 
+                    setIsOnePlayer(prev => !prev);
                     setCards(prev => [...prev]);
                 }, 1000);
             }
@@ -76,25 +87,37 @@ export default function Game() {
         <>
             <h1>משחק הזיכרון - חיות</h1>
 
-            <div className="board">
-                {
-                    cards.map((c, i) => 
-                        <div key={i} className={'card' + (c.show ? ' show' : '') + (c.complete ? ' complete' : '')} onClick={() => click(c)}>
-                            <i>{c.icon}</i>
-                            <p>{c.name}</p>
-                        </div>
-                    )
-                }
-            </div>
+            <div className="frame">
+                <div className={'player' + (isOnePlayer ? ' active' : '')}>
+                    <h3>שחקן 1</h3>
+                    <div className="animals">{player1.map(c => <div>{c.icon}</div>)}</div>
+                </div>
 
-            <div className="animals">
+                <div className="board">
+                    {
+                        cards.map((c, i) => 
+                            <div key={i} className={'card' + (c.show ? ' show' : '') + (c.complete ? ' complete' : '') + (c.id == hoverId ? ' hover' : '')} onClick={() => click(c)} onMouseOver={() => setHoverId(c.id)} onMouseOut={() => setHoverId(null)}>
+                                <i>{c.icon}</i>
+                                <p>{c.name}</p>
+                            </div>
+                        )
+                    }
+                </div>
+
+                <div className={'player' + (!isOnePlayer ? ' active' : '')}>
+                    <h3>שחקן 2</h3>
+                    <div className="animals">{player2.map(c => <div>{c.icon}</div>)}</div>
+                </div>
+            </div>
+            
+
+            {/* <div className="animals">
                 {
                     cards.filter(x => x.complete).filter((c, i, arr) => arr.findIndex(x => x.id == c.id) == i).map(c => 
                         <span>{c.icon}</span>
                     )
                 }
-                
-            </div>
+            </div> */}
         </>
     )
 }
