@@ -1,0 +1,26 @@
+header {
+  color: white;
+  padding: 8px;
+  text-align: right;
+}
+
+button.logout {
+    font-weight: bold;
+    color: white;
+    border-radius: 6px;
+    border: none;
+    margin: 0 3px;
+    font-size: 12px;
+    padding: 4px 8px;
+    background-color: red;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button.logout:hover {
+    background-color: rgb(199, 0, 0);
+}
+
+button.logout:active {
+    scale: 1.2;
+}

@@ -1,0 +1,171 @@
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 16px;
+}
+
+.Card {
+    background-color: white;
+    box-shadow: 0 0 5px #0000007f;
+    border-radius: 6px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.Card.active {
+    box-shadow: 0 0 0 6px #673AB7 inset;
+}
+
+/* .Card:hover {
+    scale: 1.05;
+} */
+
+.Card h3 {
+    margin-bottom: 0;
+    color: black;
+}
+
+.circle {
+    background-color: #dc5014;
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.4em;
+    margin: auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.circle>div {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    inset: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* עיצוב הלחצן */
+.button {
+    background: linear-gradient(145deg, #6e7bff, #4c5cf2);
+    /* גרדיאנט צבעים מגניב */
+    border: none;
+    /* לא גבול */
+    color: white;
+    /* צבע טקסט */
+    padding: 15px 30px;
+    /* רווח פנימי */
+    font-size: 18px;
+    /* גודל טקסט */
+    border-radius: 50px;
+    /* פינות עגולות מאוד */
+    cursor: pointer;
+    /* הופך את הסמן לסמן של לחיצה */
+    display: inline-flex;
+    /* עיצוב באמצעות Flexbox */
+    align-items: center;
+    /* מיישר את האייקון והטקסט */
+    justify-content: center;
+    /* מיישר את האייקון והטקסט */
+    gap: 10px;
+    /* רווח בין האייקון לטקסט */
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2);
+    /* הצללה למראה מודרני */
+    transition: all 0.3s ease;
+    /* תנועה חלקה בעת שינוי */
+    transform: scale(1);
+    /* גודל ברירת מחדל */
+    margin: 16px;
+    margin-top: 0;
+}
+
+/* עיצוב האייקון */
+.button i {
+    font-size: 20px;
+    /* גודל האייקון */
+    transition: transform 0.3s ease;
+    /* אפקט חלק לשינוי גודל האייקון */
+}
+
+/* כאשר סמן העכבר על הלחצן */
+.button:hover {
+    background: linear-gradient(145deg, #4c5cf2, #6e7bff);
+    /* שינוי בגרדיאנט */
+    box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.3);
+    /* הצללה גדולה יותר */
+    transform: scale(1.05);
+    /* הגדלת הלחצן */
+}
+
+/* כאשר הלחצן נלחץ */
+.button:active {
+    background: #3e48f2;
+    /* שינוי צבע רקע בלחיצה */
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+    /* הצללה קטנה יותר */
+    transform: scale(0.98);
+    /* הקטנה קלה של הלחצן */
+}
+
+.context-menu {
+    display: none; /* Hidden by default */
+    position: absolute; /* Important for positioning relative to viewport */
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    overflow: hidden; /* Ensures rounded corners for children */
+    min-width: 180px;
+    z-index: 1000; /* Ensure it's above other content */
+    padding: 8px 0;
+    animation: fadeIn 0.15s ease-out forwards; /* Simple fade-in animation */
+}
+
+.context-menu.active {
+    display: block; /* Shown when JavaScript adds this class */
+}
+
+.menu-item {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.95em;
+    white-space: nowrap; /* Prevent text wrapping */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.menu-item:hover {
+    background-color: #e6f2ff; /* Light blue hover */
+    color: #007bff; /* Blue text on hover */
+}
+
+.menu-item:active {
+    background-color: #cce0ff; /* Darker blue on click */
+}
+
+.menu-item i {
+    margin-left: 6px;
+}
+
+.menu-separator {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 8px 0;
+}
+
+.noData {
+    color: white;
+    font-size: 1.5em;
+    padding: 0 16px;
+}
