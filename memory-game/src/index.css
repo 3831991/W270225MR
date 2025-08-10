@@ -14,14 +14,41 @@ h1 {
 }
 
 .board {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 0 3px #0000007e;
+  position: relative;
+}
+
+.board>div {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 3px #0000007e;
   padding: 16px;
+}
+
+@keyframes zoom-in {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1.4);
+  }
+}
+
+.winner {
+  font-size: 80px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: zoom-in 2s;
 }
 
 .card {
@@ -74,7 +101,7 @@ h1 {
 }
 
 .card.hover {
-  filter: brightness(0.8);
+  filter: brightness(0.94);
 }
 
 .frame {
@@ -88,12 +115,13 @@ h1 {
 }
 
 .player h3 {
-  border: 1px solid;
+  border: 1px solid black;
   border-radius: 8px;
   margin: 4px;
   padding: 4px 0;
 }
 
 .player.active h3 {
-  background-color: #a6c6ff;
+  background-color: #2196F3;
+  color: white;
 }
