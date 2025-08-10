@@ -41,7 +41,7 @@ export default function EmployeeCard() {
                 employee ?
                 <div className="employee-card">
                     <div className="employee-card-header">
-                        <img src={`http://localhost:4000/employees/images/${employee.image._id}?authorization=${token}`} className="employee-image" />
+                        <img src={`http://localhost:4000/employees/images/${employee.id}?authorization=${token}`} className="employee-image" />
                         <h2 className="employee-name">{employee.firstName} {employee.lastName}</h2>
                     </div>
 
@@ -54,14 +54,14 @@ export default function EmployeeCard() {
 
                     <div className="employee-address">
                         <h3>כתובת:</h3>
-                        <p>{employee.address.street} {employee.address.house}, {employee.address.city}</p>
+                        <p>{employee.street} {employee.house}, {employee.city}</p>
                     </div>
 
                     <div className="employee-gender">
                         <p><strong>מין:</strong> {employee.gender}</p>
                     </div>
 
-                    <button className='button' onClick={() => navigate(`/employee/edit/${employee._id}`)}><i className='fa fa-edit'></i> עריכה</button>    
+                    <button className='button' onClick={() => navigate(`/employee/edit/${employee.id}`)}><i className='fa fa-edit'></i> עריכה</button>    
                 </div> : 
                 (employee === null ? <div className='EmployeeEmpty'>לא נמצא עובד - {id}</div> : '')
             }

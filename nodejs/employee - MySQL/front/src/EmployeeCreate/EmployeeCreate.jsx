@@ -83,9 +83,9 @@ const EmployeeCreate = () => {
                 phone: item.phone,
                 email: item.email,
                 birthDate: moment(item.birthDate).format('YYYY-MM-DD'),
-                city: item.address.city,
-                street: item.address.street,
-                house: item.address.house,
+                city: item.city,
+                street: item.street,
+                house: item.house,
                 gender: item.gender,
                 image: '',
             });
@@ -123,9 +123,9 @@ const EmployeeCreate = () => {
                 phone: item.phone,
                 email: item.email,
                 birthDate: moment(item.birthDate).format('YYYY-MM-DD'),
-                city: item.address.city,
-                street: item.address.street,
-                house: item.address.house,
+                city: item.city,
+                street: item.street,
+                house: item.house,
                 gender: item.gender,
                 image: '',
             });
@@ -232,7 +232,7 @@ const EmployeeCreate = () => {
                     snackbar("העובד נשמר בהצלחה");
                 } else {
                     const item = await res.json();
-                    navigate(`/employee/${item._id}`);
+                    navigate(`/employee/${item.id}`);
                     snackbar("העובד נוסף בהצלחה");
                 }
             }
@@ -286,7 +286,7 @@ const EmployeeCreate = () => {
                     ))}
 
                     {image?.base64 && <div style={{ textAlign: 'center' }}><img src={image.base64} width={300} /></div>}
-                    {image?._id && !image?.base64 && <div style={{ textAlign: 'center' }}><img src={`http://localhost:4000/employees/images/${image._id}?authorization=${token}`} width={300} /></div>}
+                    {image?.id && !image?.base64 && <div style={{ textAlign: 'center' }}><img src={`http://localhost:4000/employees/images/${image.id}?authorization=${token}`} width={300} /></div>}
 
                     <button type="submit" className="submit-button">שלח</button>
                 </form>

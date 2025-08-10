@@ -1,41 +1,11 @@
 import guard from '../guard.js';
-import { model, Schema } from "mongoose";
 import { Router } from 'express';
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import validate from './employees.joi.js';
-
-const Address = new Schema({
-    city: String,
-    street: String,
-    house: String,
-});
-
-const Image = new Schema({
-    name: String,
-    size: Number,
-    type: String,
-});
-
-const EmployeeSchema = new Schema({
-    firstName: String,
-    lastName: String,
-    personalId: String,
-    phone: String,
-    email: String,
-    birthDate: Date,
-    address: Address,
-    image: Image,
-    gender: String,
-    userCreatedId: {
-        type: Schema.Types.ObjectId,
-        index: true,
-    },
-});
-
-export const Employee = model("employees", EmployeeSchema);
+import { connection } from '../sqlConnection.js';
 
 const router = Router();
 
@@ -48,43 +18,66 @@ const __dirname = path.dirname(__filename);
 router.get('/', guard, async (req, res) => {
     const user = jwt.decode(req.headers.authorization);
 
-    const data = await Employee.find({ userCreatedId: user.userId });
-    res.send(data);
+    connection.query("SELECT * FROM `employees` WHERE `userCreatedId` = ?", [user.userId], (err, result) => {
+        if (err) {
+            res.status(403).send({ message: 'לא נמצאו נתונים' });
+        } else {
+            res.send(result);
+        }
+    });
 });
 
 // Get employee
 router.get('/:id', guard, async (req, res) => {
-    try {
-        const user = jwt.decode(req.headers.authorization);
+    const user = jwt.decode(req.headers.authorization);
 
-        const data = await Employee.findOne({ _id: req.params.id, userCreatedId: user.userId });
-
-        if (!data) {
+    connection.query("SELECT * FROM `employees` WHERE `id` = ? AND `userCreatedId` = ?", [req.params.id, user.userId], (err, result) => {
+        if (err) {
             res.status(403).send({ message: 'לא נמצא עובד' });
-        }
+        } else {
+            if (result.length) {
+                const employee = result[0];
+                employee.image = {
+                    id: employee.id,
+                    name: employee.imageName,
+                    size: employee.imageSize,
+                    type: employee.imageType,
+                };
 
-        res.send(data);
-    } catch (err) {
-        res.status(403).send({ message: 'לא נמצא עובד' });
-    }
+                res.send(employee);
+            } else {
+                res.status(403).send({ message: 'לא נמצא עובד' });
+            }
+        }
+    });
 });
 
 // Get image
-router.get('/images/:imageId', guard, async (req, res) => {
+router.get('/images/:id', guard, async (req, res) => {
     const user = jwt.decode(req.headers.authorization || req.query.authorization);
 
-    const employee = await Employee.findOne({ 'image._id': req.params.imageId, userCreatedId: user.userId });
+    connection.query("SELECT * FROM `employees` WHERE `id` = ? AND `userCreatedId` = ?", [req.params.id, user.userId], (err, result) => {
+        if (err) {
+            res.status(403).send({ message: 'לא נמצא עובד' });
+        } else {
+            if (result.length) {
+                const employee = result[0];
 
-    // ניתוב אבסולוטי לקובץ
-    let url = `${__dirname}/../images/${req.params.imageId}`;
-    // ניקוי הנתיב מניתובים
-    url = path.resolve(url);
+                // ניתוב אבסולוטי לקובץ
+                let url = `${__dirname}/../images/${req.params.id}`;
+                // ניקוי הנתיב מניתובים
+                url = path.resolve(url);
 
-    res.setHeader("Content-Type", employee.image.type);
-    res.setHeader("Content-Disposition", `inline; filename="${employee.image.name}"`);
+                res.setHeader("Content-Type", employee.imageType);
+                res.setHeader("Content-Disposition", `inline; filename="${employee.imageName}"`);
 
-    // שליחת הקובץ ללקוח
-    res.sendFile(url);
+                // שליחת הקובץ ללקוח
+                res.sendFile(url);
+            } else {
+                res.status(403).send({ message: 'לא נמצא עובד' });
+            }
+        }
+    });
 });
 
 // Add employee
@@ -92,126 +85,104 @@ router.post('/', guard, validate, async (req, res) => {
     const item = req.body;
     const user = jwt.decode(req.headers.authorization);
 
-    const employee = new Employee({
-        firstName: item.firstName,
-        lastName: item.lastName,
-        personalId: item.personalId,
-        phone: item.phone,
-        email: item.email,
-        birthDate: item.birthDate,
-        address: {
-            city: item.city,
-            street: item.street,
-            house: item.house,
-        },
-        image: {
-            name: item.image.name,
-            size: item.image.size,
-            type: item.image.type,
-        },
-        gender: item.gender,
-        userCreatedId: user.userId,
-    });
+    const sqlQuery = "INSERT INTO `employees`(`firstName`, `lastName`, `personalId`, `phone`, `email`, `birthDate`, `city`, `street`, `house`, `imageName`, `imageSize`, `imageType`, `gender`, `userCreatedId`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    const values = [item.firstName, item.lastName, item.personalId, item.phone, item.email, item.birthDate, item.city, item.street, item.house, item.image?.name || null, item.image?.size || null, item.image?.type || null, item.gender, user.userId];
 
-    const newEmployee = await employee.save();
-
-    if (item.image?.base64) {
-        // אם אין את התיקייה - צור אותה
-        if (!fs.existsSync('./images')) {
-            fs.mkdirSync('./images', { recursive: true });
+    connection.query(sqlQuery, values, async (err, result) => {
+        if (err) {
+            throw err;
         }
-    
-        // מחלץ את הקוד שמייצג את התמונה
-        const imageData = item.image.base64;
-        const matches = imageData.match(/^data:(.+);base64,(.+)$/);
-        const bas64 = matches[2];
-    
-        // יוצר את התמונה באמצעות הקוד (Base64)
-        fs.writeFile(`./images/${newEmployee.image._id}`, Buffer.from(bas64, 'base64'), err => {
-    
-        });
-    }
 
-    res.send(newEmployee);
+        const newEmployeeId =  result.insertId;
+
+        if (item.image?.base64) {
+            // אם אין את התיקייה - צור אותה
+            if (!fs.existsSync('./images')) {
+                fs.mkdirSync('./images', { recursive: true });
+            }
+        
+            // מחלץ את הקוד שמייצג את התמונה
+            const imageData = item.image.base64;
+            const matches = imageData.match(/^data:(.+);base64,(.+)$/);
+            const bas64 = matches[2];
+        
+            // יוצר את התמונה באמצעות הקוד (Base64)
+            fs.writeFile(`./images/${newEmployeeId}`, Buffer.from(bas64, 'base64'), err => {
+        
+            });
+        }
+
+        res.send({
+            id: newEmployeeId,
+        });
+    });
 });
 
 // Edit employee
 router.put('/:id', guard, validate, async (req, res) => {
     const item = req.body;
+    const user = jwt.decode(req.headers.authorization);
 
-    try {
-        const user = jwt.decode(req.headers.authorization);
-        const employee = await Employee.findOne({ _id: req.params.id, userCreatedId: user.userId });
-        
-        if (!employee) {
-            return res.status(403).send({ message: 'עובד לא קיים' });
-        }
+    connection.query("SELECT * FROM `employees` WHERE `id` = ? AND `userCreatedId` = ?", [req.params.id, user.userId], (err, result) => {
+        if (err) {
+            res.status(403).send({ message: 'לא נמצא עובד' });
+        } else {
 
-        employee.firstName = item.firstName;
-        employee.lastName = item.lastName;
-        employee.personalId = item.personalId;
-        employee.phone = item.phone;
-        employee.email = item.email;
-        employee.birthDate = item.birthDate;
-        employee.gender = item.gender;
-        employee.address.city = item.city;
-        employee.address.street = item.street;
-        employee.address.house = item.house;
+            if (result.length) {
+                const employee = result[0];
 
-        if (item.image.base64) {
-            employee.image = {
-                name: item.image.name,
-                size: item.image.size,
-                type: item.image.type,
-            };
+                let imageName = employee.imageName;
+                let imageSize = employee.imageSize;
+                let imageType = employee.imageType;
 
-            const savedItem = await employee.save();
+                if (item.image.base64) {
+                    imageName = item.image?.name || null;
+                    imageSize = item.image?.size || null;
+                    imageType = item.image?.type || null;
 
-            // אם אין את התיקייה - צור אותה
-            if (!fs.existsSync('./images')) {
-                fs.mkdirSync('./images', { recursive: true });
+                    // אם אין את התיקייה - צור אותה
+                    if (!fs.existsSync('./images')) {
+                        fs.mkdirSync('./images', { recursive: true });
+                    }
+
+                    // מחלץ את הקוד שמייצג את התמונה
+                    const imageData = item.image.base64;
+                    const matches = imageData.match(/^data:(.+);base64,(.+)$/);
+                    const bas64 = matches[2];
+
+                    // יוצר את התמונה באמצעות הקוד (Base64)
+                    fs.writeFile(`./images/${employee.id}`, Buffer.from(bas64, 'base64'), err => {
+
+                    });
+                }
+
+                const sqlQuery = "UPDATE `employees` SET `firstName`=?,`lastName`=?,`personalId`=?,`phone`=?,`email`=?,`birthDate`=?,`city`=?,`street`=?,`house`=?,`imageName`=?,`imageSize`=?,`imageType`=?,`gender`=? WHERE `userCreatedId`=? AND `id` = ?";
+                const values = [item.firstName, item.lastName, item.personalId, item.phone, item.email, item.birthDate, item.city, item.street, item.house, imageName, imageSize, imageType, item.gender, user.userId, employee.id];
+
+                connection.query(sqlQuery, values, async (err, result) => {
+
+                    if (err) {
+                        throw err;
+                    }
+                    res.end();
+                });
+            } else {
+                res.status(403).send({ message: 'לא נמצא עובד' });
             }
-
-            // מחלץ את הקוד שמייצג את התמונה
-            const imageData = item.image.base64;
-            const matches = imageData.match(/^data:(.+);base64,(.+)$/);
-            const bas64 = matches[2];
-
-            // יוצר את התמונה באמצעות הקוד (Base64)
-            fs.writeFile(`./images/${savedItem.image._id}`, Buffer.from(bas64, 'base64'), err => {
-
-            });
         }
-        // נמחקה התמונה
-        else {
-            if (!item.image._id) {
-                delete employee.image;
-            }
-
-            await employee.save();
-        }
-
-        res.end();
-    } catch (err) {
-        res.status(403).send({ message: 'עובד לא קיים' });
-    }
+    });
 });
 
 // Remove employee
 router.delete('/:id', guard, async (req, res) => {
-    try {
-        const user = jwt.decode(req.headers.authorization);
-        const employee = await Employee.findOne({ _id: req.params.id, userCreatedId: user.userId });
-        
-        if (!employee) {
-            return res.status(403).send({ message: 'עובד לא קיים' });
-        }
+    const user = jwt.decode(req.headers.authorization);
 
-        await Employee.findByIdAndDelete(req.params.id);
+    const sqlQuery = "DELETE FROM `employees` WHERE `userCreatedId`=? AND `id` = ?";
+    const values = [user.userId, req.params.id];
+
+    connection.query(sqlQuery, values, async (err, result) => {
         res.end();
-    } catch (err) {
-        res.status(403).send({ message: '' });
-    }
+    });
 });
 
 export default router;

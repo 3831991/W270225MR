@@ -1,67 +1,54 @@
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from "../config.js";
 import guard from '../guard.js';
-
-const schema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    email: String,
-    phone: String,
-    password: String,
-});
-
-const User = mongoose.model("users", schema);
+import { connection } from "../sqlConnection.js";
 
 const router = Router();
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    const userFind = await User.findOne({ email });
+    connection.query("SELECT * FROM `users` WHERE `email` = ?", [email], async (err, result) => {
+        if (!result.length) {
+            return res.status(403).send({ message: "email or password incorrect" });
+        }
 
-    if (!userFind) {
-        return res.status(403).send({ message: "email or password incorrect" });
-    }
+        const userFind = result.pop();
 
-    const passwordMatch = await bcrypt.compare(password, userFind.password);
+        const passwordMatch = await bcrypt.compare(password, userFind.password);
 
-    if (!passwordMatch) {
-        return res.status(403).send({ message: "email or password incorrect" });
-    }
+        if (!passwordMatch) {
+            return res.status(403).send({ message: "email or password incorrect" });
+        }
 
-    const obj = {
-        userId: userFind._id,
-        fullName: `${userFind.firstName} ${userFind.lastName}`,
-    };
+        const obj = {
+            userId: userFind.id,
+            fullName: `${userFind.firstName} ${userFind.lastName}`,
+        };
 
-    const token = jwt.sign(obj, JWT_SECRET, { expiresIn: '15m' });
+        const token = jwt.sign(obj, JWT_SECRET, { expiresIn: '15m' });
 
-    res.send(token);
+        res.send(token);
+    });
 });
 
 router.post('/signup', async (req, res) => {
-    const { firstName, lastName, email, phone, password } = req.body;
+    const { firstName, lastName, phone, email, password } = req.body;
 
-    const userFind = await User.findOne({ email });
+    connection.query("SELECT * FROM `users` WHERE `email` = ?", [email], async (err, result) => {
+        if (result.length) {
+            return res.status(403).send({ message: "email is used" });
+        }
 
-    if (userFind) {
-        return res.status(403).send({ message: "email is used" });
-    }
+        const sqlQuery = "INSERT INTO `users`( `firstName`, `lastName`, `phone`, `email`, `password`) VALUES(?,?,?,?,?)";
+        const values = [firstName, lastName, phone, email, await bcrypt.hash(password, 10)];
 
-    const user = new User({
-        firstName,
-        lastName,
-        email,
-        phone,
-        password: await bcrypt.hash(password, 10),
-    });
-
-    const newUser = await user.save();
-
-    res.send(newUser);
+        connection.query(sqlQuery, values, async (err, result) => {
+            res.end();
+        });
+    })
 });
 
 router.get('/token', guard, async (req, res) => {

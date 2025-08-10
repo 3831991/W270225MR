@@ -64,7 +64,7 @@ export default function Employee() {
         });
 
         if (res.ok) {
-            setEmployees(employees.filter(e => e._id != id));
+            setEmployees(employees.filter(e => e.id != id));
             snackbar("העובד נמחק בהצלחה");
         }
 
@@ -86,11 +86,11 @@ export default function Employee() {
             <div className='cards'>
                 {
                     employees.map((e, i) => 
-                        <div className={'Card' + (isMenu && employeeClicked._id == e._id ? ' active' : '')} onContextMenu={ev => rightClick(ev, e)} onDoubleClick={() => navigate(`/employee/${e._id}`)} key={e._id}>
+                        <div className={'Card' + (isMenu && employeeClicked.id == e.id ? ' active' : '')} onContextMenu={ev => rightClick(ev, e)} onDoubleClick={() => navigate(`/employee/${e.id}`)} key={e.id}>
                             <div className='circle' style={{ backgroundColor: `hsl(${i * 40}deg 83% 47%)` }}>
                                 {e.firstName[0]}
                                 {/* התמונה כרקע על אלמנט שמכסה את הכל */}
-                                <div style={{ backgroundImage: `url('http://localhost:4000/employees/images/${e.image._id}?authorization=${token}')` }}></div>    
+                                <div style={{ backgroundImage: `url('http://localhost:4000/employees/images/${e.id}?authorization=${token}')` }}></div>    
                             </div>
                             <h3>{e.firstName} {e.lastName}</h3>
                         </div>
@@ -101,11 +101,11 @@ export default function Employee() {
             { !employees.length && <p className='noData'>אין עדיין עובדים..</p> }
 
             <div className="context-menu" ref={menu} style={{ display: isMenu ? 'block' : 'none' }}>
-                <Link to={`/employee/${employeeClicked?._id}`} className="menu-item"><i className='fa fa-eye'></i> צפייה</Link>
-                <Link to={`/employee/edit/${employeeClicked?._id}`} className="menu-item"><i className='fa fa-edit'></i> עריכה</Link>
+                <Link to={`/employee/${employeeClicked?.id}`} className="menu-item"><i className='fa fa-eye'></i> צפייה</Link>
+                <Link to={`/employee/edit/${employeeClicked?.id}`} className="menu-item"><i className='fa fa-edit'></i> עריכה</Link>
                 <hr className="menu-separator" />
                 <a href="#" className="menu-item" onClick={duplicate}><i className='fa fa-copy'></i> שכפול</a>
-                <a href="#" className="menu-item" onClick={() => remove(employeeClicked?._id)}><i className='fa fa-trash'></i> מחיקה</a>
+                <a href="#" className="menu-item" onClick={() => remove(employeeClicked?.id)}><i className='fa fa-trash'></i> מחיקה</a>
             </div>
         </>
     )
